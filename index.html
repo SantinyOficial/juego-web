@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Formulario para registro de datos de cédula de ciudadanía">
+    <title>Registro de Cédula de Ciudadanía</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="header__title">
+                <span class="header__icon">📋</span>
+                Registro de Cédula de Ciudadanía
+            </h1>
+            <p class="header__subtitle">Ingrese los datos solicitados de manera precisa</p>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section class="form-section">
+                <div class="form-container">
+                    <header class="form-header">
+                        <h2 class="form-title">Información Personal</h2>
+                        <p class="form-description">Complete todos los campos requeridos</p>
+                    </header>
+
+                    <form id="cedulaForm" class="form" novalidate>
+                        <!-- Información de Identificación -->
+                        <fieldset class="form__fieldset">
+                            <legend class="form__legend">Datos de Identificación</legend>
+                            
+                            <div class="form__group">
+                                <label for="numeroCedula" class="form__label">
+                                    Número de Cédula <span class="form__required">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="numeroCedula" 
+                                    name="numeroCedula" 
+                                    class="form__input" 
+                                    placeholder="Ej: 1234567890"
+                                    required
+                                    maxlength="10"
+                                    pattern="[0-9]{7,10}"
+                                >
+                                <small class="form__help">Ingrese solo números, sin puntos ni comas</small>
+                                <span class="form__error" id="numeroCedula-error"></span>
+                            </div>
+
+                            <div class="form__group">
+                                <label for="lugarExpedicion" class="form__label">
+                                    Lugar de Expedición <span class="form__required">*</span>
+                                </label>
+                                <select id="lugarExpedicion" name="lugarExpedicion" class="form__select" required>
+                                    <option value="">Seleccione una ciudad</option>
+                                    <option value="bogota">Bogotá D.C.</option>
+                                    <option value="medellin">Medellín</option>
+                                    <option value="cali">Cali</option>
+                                    <option value="barranquilla">Barranquilla</option>
+                                    <option value="cartagena">Cartagena</option>
+                                    <option value="bucaramanga">Bucaramanga</option>
+                                    <option value="pereira">Pereira</option>
+                                    <option value="manizales">Manizales</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                                <span class="form__error" id="lugarExpedicion-error"></span>
+                            </div>
+
+                            <div class="form__group form__group--conditional" id="otroLugarGroup" style="display: none;">
+                                <label for="otroLugar" class="form__label">
+                                    Especifique el lugar
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="otroLugar" 
+                                    name="otroLugar" 
+                                    class="form__input" 
+                                    placeholder="Ingrese la ciudad de expedición"
+                                >
+                                <span class="form__error" id="otroLugar-error"></span>
+                            </div>
+                        </fieldset>
+
+                        <!-- Información Personal -->
+                        <fieldset class="form__fieldset">
+                            <legend class="form__legend">Información Personal</legend>
+                            
+                            <div class="form__row">
+                                <div class="form__group form__group--half">
+                                    <label for="primerNombre" class="form__label">
+                                        Primer Nombre <span class="form__required">*</span>
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="primerNombre" 
+                                        name="primerNombre" 
+                                        class="form__input" 
+                                        placeholder="Primer nombre"
+                                        required
+                                        pattern="[A-Za-zÀ-ÿ\s]{2,50}"
+                                    >
+                                    <span class="form__error" id="primerNombre-error"></span>
+                                </div>
+
+                                <div class="form__group form__group--half">
+                                    <label for="segundoNombre" class="form__label">
+                                        Segundo Nombre
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="segundoNombre" 
+                                        name="segundoNombre" 
+                                        class="form__input" 
+                                        placeholder="Segundo nombre (opcional)"
+                                        pattern="[A-Za-zÀ-ÿ\s]{2,50}"
+                                    >
+                                    <span class="form__error" id="segundoNombre-error"></span>
+                                </div>
+                            </div>
+
+                            <div class="form__row">
+                                <div class="form__group form__group--half">
+                                    <label for="primerApellido" class="form__label">
+                                        Primer Apellido <span class="form__required">*</span>
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="primerApellido" 
+                                        name="primerApellido" 
+                                        class="form__input" 
+                                        placeholder="Primer apellido"
+                                        required
+                                        pattern="[A-Za-zÀ-ÿ\s]{2,50}"
+                                    >
+                                    <span class="form__error" id="primerApellido-error"></span>
+                                </div>
+
+                                <div class="form__group form__group--half">
+                                    <label for="segundoApellido" class="form__label">
+                                        Segundo Apellido
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="segundoApellido" 
+                                        name="segundoApellido" 
+                                        class="form__input" 
+                                        placeholder="Segundo apellido (opcional)"
+                                        pattern="[A-Za-zÀ-ÿ\s]{2,50}"
+                                    >
+                                    <span class="form__error" id="segundoApellido-error"></span>
+                                </div>
+                            </div>
+
+                            <div class="form__row">
+                                <div class="form__group form__group--half">
+                                    <label for="fechaNacimiento" class="form__label">
+                                        Fecha de Nacimiento <span class="form__required">*</span>
+                                    </label>
+                                    <input 
+                                        type="date" 
+                                        id="fechaNacimiento" 
+                                        name="fechaNacimiento" 
+                                        class="form__input" 
+                                        required
+                                        max="2006-12-31"
+                                        min="1900-01-01"
+                                    >
+                                    <span class="form__error" id="fechaNacimiento-error"></span>
+                                </div>
+
+                                <div class="form__group form__group--half">
+                                    <label for="genero" class="form__label">
+                                        Género <span class="form__required">*</span>
+                                    </label>
+                                    <select id="genero" name="genero" class="form__select" required>
+                                        <option value="">Seleccione</option>
+                                        <option value="masculino">Masculino</option>
+                                        <option value="femenino">Femenino</option>
+                                        <option value="otro">Otro</option>
+                                        <option value="prefiero-no-decir">Prefiero no decir</option>
+                                    </select>
+                                    <span class="form__error" id="genero-error"></span>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Información de Contacto -->
+                        <fieldset class="form__fieldset">
+                            <legend class="form__legend">Información de Contacto</legend>
+                            
+                            <div class="form__group">
+                                <label for="direccion" class="form__label">
+                                    Dirección de Residencia <span class="form__required">*</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="direccion" 
+                                    name="direccion" 
+                                    class="form__input" 
+                                    placeholder="Ej: Calle 123 #45-67"
+                                    required
+                                    maxlength="100"
+                                >
+                                <span class="form__error" id="direccion-error"></span>
+                            </div>
+
+                            <div class="form__row">
+                                <div class="form__group form__group--half">
+                                    <label for="telefono" class="form__label">
+                                        Teléfono <span class="form__required">*</span>
+                                    </label>
+                                    <input 
+                                        type="tel" 
+                                        id="telefono" 
+                                        name="telefono" 
+                                        class="form__input" 
+                                        placeholder="Ej: 3001234567"
+                                        required
+                                        pattern="[0-9]{7,10}"
+                                        maxlength="10"
+                                    >
+                                    <span class="form__error" id="telefono-error"></span>
+                                </div>
+
+                                <div class="form__group form__group--half">
+                                    <label for="email" class="form__label">
+                                        Correo Electrónico <span class="form__required">*</span>
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        id="email" 
+                                        name="email" 
+                                        class="form__input" 
+                                        placeholder="ejemplo@correo.com"
+                                        required
+                                    >
+                                    <span class="form__error" id="email-error"></span>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Botones de Acción -->
+                        <div class="form__actions">
+                            <button type="button" class="btn btn--secondary" id="limpiarBtn">
+                                Limpiar Formulario
+                            </button>
+                            <button type="submit" class="btn btn--primary" id="enviarBtn">
+                                Registrar Información
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Sección de Preview de Datos -->
+            <section class="preview-section" id="previewSection" style="display: none;">
+                <div class="preview-container">
+                    <header class="preview-header">
+                        <h2 class="preview-title">Resumen de Información</h2>
+                        <p class="preview-description">Verifique que los datos sean correctos</p>
+                    </header>
+                    <div class="preview-content" id="previewContent">
+                        <!-- El contenido se generará dinámicamente -->
+                    </div>
+                    <div class="preview-actions">
+                        <button type="button" class="btn btn--secondary" id="editarBtn">
+                            Editar Información
+                        </button>
+                        <button type="button" class="btn btn--success" id="confirmarBtn">
+                            Confirmar Registro
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="footer__text">
+                &copy; 2025 Sistema de Registro de Cédula. 
+                <span class="footer__note">Todos los datos son confidenciales.</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/validaciones.js"></script>
+    <script src="js/formulario.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
