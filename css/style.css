@@ -3980,7 +3980,7 @@ body.big-bang {
     background: rgba(247, 223, 30, 0.16);
     border: 1px solid rgba(247, 223, 30, 0.5);
     border-radius: 10px;
-    color: rgba(17, 17, 17, 0.92);
+    color: rgba(247, 223, 30, 0.95);
     font-weight: 700;
     min-width: 110px;
     transition: transform 0.2s ease, box-shadow 0.25s ease;
@@ -3988,7 +3988,7 @@ body.big-bang {
 }
 
 #js-game .code-input::placeholder {
-    color: rgba(17, 17, 17, 0.6);
+    color: rgba(247, 223, 30, 0.55);
 }
 
 #js-game .code-input:focus {

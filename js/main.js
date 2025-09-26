@@ -62,9 +62,11 @@ class HTMLSemanticGame {
             }
         };
         
-        this.completedPhases = [];
-        this.completedGames = [];
-        this.isGameStarted = false;
+    this.completedPhases = [];
+    this.completedGames = [];
+    this.isGameStarted = false;
+    this.isTransitioningGame = false;
+    this.gameTransitionTimeout = null;
         this.validator = null;
         this.jsChallenges = [];
         this.init();
@@ -1040,6 +1042,12 @@ class HTMLSemanticGame {
     resetGame() {
         console.log('🔄 Reiniciando juego...');
         
+        if (this.gameTransitionTimeout) {
+            clearTimeout(this.gameTransitionTimeout);
+            this.gameTransitionTimeout = null;
+        }
+        this.isTransitioningGame = false;
+
         // Sonido de reset
         if (window.GameAudio) {
             window.GameAudio.playSound('reset', { volume: 0.5 });
@@ -2321,6 +2329,7 @@ class HTMLSemanticGame {
         const input = event.target;
         const value = input.value.trim().toLowerCase();
         const correctAnswer = input.dataset.answer.toLowerCase();
+        const challengeCard = input.closest('.challenge-card');
         
         // Feedback visual en tiempo real
         input.classList.remove('correct', 'wrong');
@@ -2330,6 +2339,8 @@ class HTMLSemanticGame {
         } else if (value.length > 0) {
             input.classList.add('wrong');
         }
+
+        this.evaluateJSChallengeProgress(challengeCard);
     }
 
     /**
@@ -2340,31 +2351,49 @@ class HTMLSemanticGame {
         const value = input.value.trim().toLowerCase();
         const correctAnswer = input.dataset.answer.toLowerCase();
         const challengeCard = input.closest('.challenge-card');
-        const statusElement = challengeCard.querySelector('.challenge-status');
         
         if (value === correctAnswer) {
             input.classList.add('correct');
             input.classList.remove('wrong');
-            
-            // Verificar si todos los inputs de este desafío están correctos
-            const allInputs = challengeCard.querySelectorAll('.code-input');
-            const correctInputs = challengeCard.querySelectorAll('.code-input.correct');
-            
-            if (allInputs.length === correctInputs.length) {
-                statusElement.textContent = '✅ ¡Desafío completado!';
-                statusElement.className = 'challenge-status correct';
-                
-                // Marcar este desafío como completado si no lo estaba
-                if (!challengeCard.dataset.completed) {
-                    this.handleJSChallengeCompletion(challengeCard);
-                }
-            }
         } else if (value.length > 0) {
             input.classList.add('wrong');
             input.classList.remove('correct');
             
             if (window.GameAudio) {
                 window.GameAudio.playSound('validation-error');
+            }
+        }
+
+        this.evaluateJSChallengeProgress(challengeCard);
+    }
+
+    /**
+     * Evalúa el estado actual de un desafío y gestiona su feedback
+     */
+    evaluateJSChallengeProgress(challengeCard) {
+        if (!challengeCard) return;
+
+        const inputs = Array.from(challengeCard.querySelectorAll('.code-input'));
+        if (!inputs.length) return;
+
+    const statusElement = challengeCard.querySelector('.challenge-status');
+    const defaultStatus = statusElement ? statusElement.dataset.defaultText : null;
+
+        const allCorrect = inputs.every(input => input.value.trim().toLowerCase() === (input.dataset.answer || '').toLowerCase());
+
+        if (allCorrect) {
+            if (statusElement) {
+                statusElement.textContent = '✅ ¡Desafío completado!';
+                statusElement.className = 'challenge-status correct';
+            }
+
+            if (!challengeCard.dataset.completed) {
+                this.handleJSChallengeCompletion(challengeCard);
+            }
+        } else {
+            if (statusElement && defaultStatus) {
+                statusElement.textContent = defaultStatus;
+                statusElement.className = 'challenge-status';
             }
         }
     }
@@ -2410,6 +2439,9 @@ class HTMLSemanticGame {
             // Todos los juegos completados
             setTimeout(() => this.triggerBigBang(), 2000);
         }
+
+        this.isTransitioningGame = false;
+        this.gameTransitionTimeout = null;
     }
 
     /**
@@ -2432,6 +2464,12 @@ class HTMLSemanticGame {
      * Completa el juego actual y avanza al siguiente
      */
     completeCurrentGame() {
+        if (this.isTransitioningGame) {
+            return;
+        }
+
+        this.isTransitioningGame = true;
+
         const config = this.gameConfigs[this.currentGame];
         this.showNotification(config.completionMessage, 'success');
         
@@ -2443,7 +2481,11 @@ class HTMLSemanticGame {
             this.addAchievement('⚡', 'Maestro JavaScript', 'Has dominado la lógica JavaScript');
         }
         
-        setTimeout(() => {
+        if (this.gameTransitionTimeout) {
+            clearTimeout(this.gameTransitionTimeout);
+        }
+
+        this.gameTransitionTimeout = setTimeout(() => {
             this.advanceToNextGame();
         }, 3000);
     }
