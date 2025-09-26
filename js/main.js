@@ -67,8 +67,154 @@ class HTMLSemanticGame {
      * Inicializa el juego
      */
     init() {
-        this.setupWelcomeScreen();
+        this.setupIntroAnimation();
         console.log('🎮 Juego HTML Semántico iniciado');
+    }
+
+    /**
+     * Configura la animación de introducción
+     */
+    setupIntroAnimation() {
+        const text = "Bienvenido al juego de desarrollo web, aprenderás HTML, CSS y JS mientras te diviertes.";
+        const typewriterElement = document.getElementById('typewriter-text');
+        const cursorElement = document.getElementById('cursor');
+        const startBtn = document.getElementById('start-adventure-btn');
+        
+        // Validar que los elementos existan
+        if (!typewriterElement) {
+            console.error('❌ Elemento typewriter-text no encontrado');
+            return;
+        }
+        if (!startBtn) {
+            console.error('❌ Elemento start-adventure-btn no encontrado');
+            return;
+        }
+        
+        // Mostrar mensaje de "Click para comenzar" y el cursor parpadeante
+        typewriterElement.textContent = "Haz clic en cualquier parte para comenzar la aventura...";
+        typewriterElement.classList.add('click-to-start');
+        
+        let animationStarted = false;
+        let charIndex = 0;
+        const typeSpeed = 50; // Velocidad de escritura en ms
+        
+        console.log('✨ Esperando interacción del usuario para iniciar...');
+        
+        // Función de escritura con colores específicos
+        const typeWriter = () => {
+            if (charIndex < text.length) {
+                const currentChar = text.charAt(charIndex);
+                
+                // Reproducir sonido de teclear si no es espacio (sin bloquear)
+                if (currentChar !== ' ' && window.GameAudio) {
+                    window.GameAudio.playSound('typewriter-key').catch(() => {});
+                }
+                
+                // Agregar el carácter
+                typewriterElement.textContent += currentChar;
+                
+                charIndex++;
+                setTimeout(typeWriter, typeSpeed);
+            } else {
+                console.log('✅ Animación typewriter completada');
+                
+                // Aplicar colores especiales solo al final
+                this.applySpecialWordColors(typewriterElement);
+                
+                // Mostrar botón después de completar la escritura
+                setTimeout(() => {
+                    startBtn.classList.remove('hidden');
+                    startBtn.classList.add('show');
+                    // Reproducir sonido de completado
+                    if (window.GameAudio) {
+                        window.GameAudio.playSound('notification').catch(() => {});
+                    }
+                }, 500);
+            }
+        };
+        
+        // Función para iniciar la animación después del primer clic
+        const startAnimation = async () => {
+            if (animationStarted) return;
+            animationStarted = true;
+            
+            console.log('🎮 Usuario interactuó - Iniciando animación y audio...');
+            
+            // Inicializar el sistema de audio con la interacción del usuario
+            if (window.GameAudio && window.GameAudio.audioContext) {
+                try {
+                    await window.GameAudio.audioContext.resume();
+                    console.log('🔊 Contexto de audio activado');
+                } catch (error) {
+                    console.log('⚠️ No se pudo activar el audio:', error);
+                }
+            }
+            
+            // Limpiar el texto y quitar la clase de "click to start"
+            typewriterElement.textContent = '';
+            typewriterElement.classList.remove('click-to-start');
+            
+            // Reproducir sonido de inicio
+            if (window.GameAudio) {
+                window.GameAudio.playSound('power-up').catch(() => {});
+            }
+            
+            // Iniciar la animación después de un breve delay
+            setTimeout(typeWriter, 300);
+            
+            // Remover event listeners
+            document.removeEventListener('click', startAnimation);
+            document.removeEventListener('keydown', startAnimation);
+            typewriterElement.style.cursor = 'default';
+        };
+        
+        // Event listeners para detectar la primera interacción
+        document.addEventListener('click', startAnimation);
+        document.addEventListener('keydown', startAnimation);
+        
+        // Cambiar cursor para indicar que es clickeable
+        typewriterElement.style.cursor = 'pointer';
+        
+        // Event listener para el botón de empezar
+        startBtn.addEventListener('click', () => {
+            if (window.GameAudio) {
+                window.GameAudio.playSound('click');
+            }
+            this.transitionToWelcomeScreen();
+        });
+        
+        console.log('✨ Animación de introducción configurada - Esperando clic del usuario');
+    }
+
+    /**
+     * Aplica colores especiales a las palabras HTML, CSS y JS
+     */
+    applySpecialWordColors(element) {
+        let html = element.innerHTML;
+        
+        // Reemplazar palabras clave con spans coloreados
+        html = html.replace(/\bHTML\b/g, '<span class="html-word">HTML</span>');
+        html = html.replace(/\bCSS\b/g, '<span class="css-word">CSS</span>');
+        html = html.replace(/\bJS\b/g, '<span class="js-word">JS</span>');
+        
+        element.innerHTML = html;
+    }
+
+    /**
+     * Transición a la pantalla de bienvenida
+     */
+    transitionToWelcomeScreen() {
+        const introAnimation = document.getElementById('intro-animation');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        
+        // Fade out de la animación inicial
+        introAnimation.classList.add('fade-out');
+        
+        setTimeout(() => {
+            introAnimation.style.display = 'none';
+            welcomeScreen.classList.remove('hidden');
+            this.setupWelcomeScreen();
+        }, 1000);
     }
 
     /**
@@ -79,6 +225,7 @@ class HTMLSemanticGame {
         this.validator = new FormValidator();
         
         const playerForm = document.getElementById('player-form');
+        const formIntro = document.getElementById('form-intro');
 
         // Configurar validación en tiempo real
         this.setupRealTimeValidation();
@@ -86,12 +233,48 @@ class HTMLSemanticGame {
         // Configurar sonidos de interfaz
         this.setupUIAudioEvents();
 
+        // Configurar la desaparición del título cuando se empiece a llenar el formulario
+        this.setupFormProgressTransition(formIntro);
+
         playerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             this.handlePlayerRegistration(playerForm);
         });
 
         console.log('👋 Pantalla de bienvenida configurada');
+    }
+
+    /**
+     * Configura la transición del título del formulario al indicador de progreso
+     */
+    setupFormProgressTransition(formIntro) {
+        const inputs = document.querySelectorAll('#player-form input, #player-form select');
+        const progressContainer = document.querySelector('.form-progress');
+        let hasStartedFilling = false;
+
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (!hasStartedFilling && input.value.trim() !== '') {
+                    hasStartedFilling = true;
+                    // Fade out del título
+                    formIntro.style.opacity = '0';
+                    formIntro.style.transform = 'translateY(-10px)';
+                    
+                    setTimeout(() => {
+                        formIntro.style.display = 'none';
+                        // Mostrar indicador de progreso
+                        progressContainer.style.display = 'block';
+                        progressContainer.style.opacity = '0';
+                        progressContainer.style.transform = 'translateY(10px)';
+                        
+                        setTimeout(() => {
+                            progressContainer.style.opacity = '1';
+                            progressContainer.style.transform = 'translateY(0)';
+                        }, 50);
+                    }, 300);
+                }
+            });
+        });
     }
 
     /**

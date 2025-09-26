@@ -13,24 +13,31 @@ class GameAudioSystem {
         this.sounds = new Map();
         this.loadedSounds = new Set();
         
-        this.init();
+        // Inicializar en background sin bloquear
+        setTimeout(() => this.init(), 100);
     }
 
     /**
-     * Inicializa el sistema de audio
+     * Inicializa el sistema de audio (sin bloquear)
      */
     async init() {
         try {
-            // Crear contexto de audio
-            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            // Crear contexto de audio solo si no existe
+            if (!this.audioContext) {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                console.log('🎵 Contexto de audio creado');
+            }
             
             // Configurar sonidos del juego
             this.setupGameSounds();
             
-            // Crear sonidos sintéticos si no hay archivos
-            await this.createSyntheticSounds();
+            // Crear sonidos sintéticos en background
+            this.createSyntheticSounds().then(() => {
+                console.log('🔊 Sistema de audio gaming inicializado completamente');
+            }).catch(error => {
+                console.warn('⚠️ Error creando sonidos:', error);
+            });
             
-            console.log('🔊 Sistema de audio gaming inicializado');
         } catch (error) {
             console.warn('⚠️ Audio no disponible:', error);
             this.fallbackToBasicAudio();
@@ -163,6 +170,13 @@ class GameAudioSystem {
                 duration: 0.3, 
                 volume: 0.4,
                 description: 'Reinicio del juego'
+            },
+            'typewriter-key': { 
+                type: 'ui', 
+                frequency: 800, 
+                duration: 0.05, 
+                volume: 0.15,
+                description: 'Sonido de tecla al escribir'
             }
         };
     }
@@ -290,7 +304,18 @@ class GameAudioSystem {
      * Reproduce un sonido
      */
     async playSound(soundName, options = {}) {
-        if (this.muted || !this.audioContext) return;
+        if (this.muted) return;
+        
+        // Inicializar audio si no está disponible (sin bloquear)
+        if (!this.audioContext) {
+            try {
+                await this.init();
+            } catch (error) {
+                console.warn('⚠️ No se pudo inicializar el audio:', error);
+                return;
+            }
+            if (!this.audioContext) return;
+        }
 
         try {
             // Reanudar contexto si está suspendido

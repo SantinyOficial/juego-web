@@ -37,8 +37,10 @@
     --color-gray-800: #1f2937;
     --color-gray-900: #111827;
     
-    /* Tipografía */
-    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* Tipografía Gaming - Solo fuentes del sistema */
+    --font-family-gaming: 'Courier New', 'Consolas', 'Monaco', 'Menlo', monospace;
+    --font-family-ui: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+    --font-family: var(--font-family-ui);
     --font-size-sm: 0.875rem;
     --font-size-base: 1rem;
     --font-size-lg: 1.125rem;
@@ -320,6 +322,233 @@ body.big-bang {
 }
 
 /* ===================================
+   PANTALLA DE ANIMACIÓN INICIAL
+   =================================== */
+.intro-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(15px);
+    background: rgba(0, 0, 0, 0.3);
+    animation: intro-appear 1s ease-out;
+}
+
+.intro-animation.fade-out {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+    transition: all 1s ease-out;
+}
+
+.intro-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-8);
+    text-align: center;
+    max-width: 800px;
+    padding: var(--spacing-6);
+}
+
+.typewriter-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
+.typewriter-text {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #00ffff;
+    font-family: var(--font-family-gaming);
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.4);
+    line-height: 1.4;
+    letter-spacing: 2px;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+/* Estilo especial para el mensaje "Click para comenzar" */
+.typewriter-text.click-to-start {
+    font-size: 2.2rem;
+    color: #ffd700;
+    text-transform: none;
+    font-weight: 700;
+    text-shadow: 
+        0 0 15px rgba(255, 215, 0, 0.9),
+        0 0 25px rgba(255, 215, 0, 0.6),
+        0 0 35px rgba(255, 215, 0, 0.3);
+    animation: click-to-start-pulse 2s ease-in-out infinite;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.typewriter-text.click-to-start:hover {
+    transform: scale(1.05);
+    text-shadow: 
+        0 0 20px rgba(255, 215, 0, 1),
+        0 0 30px rgba(255, 215, 0, 0.8),
+        0 0 40px rgba(255, 215, 0, 0.5);
+}
+
+@keyframes click-to-start-pulse {
+    0% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.02);
+    }
+    100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+}
+
+/* Estilos para palabras específicas en el texto */
+.typewriter-text .html-word {
+    color: #ff8c42;
+    text-shadow: 
+        0 0 15px rgba(255, 140, 66, 0.8),
+        0 0 30px rgba(255, 140, 66, 0.6),
+        0 0 45px rgba(255, 140, 66, 0.4);
+    font-weight: 900;
+    animation: tech-glow-orange 2s ease-in-out infinite alternate;
+}
+
+.typewriter-text .css-word {
+    color: #4a90e2;
+    text-shadow: 
+        0 0 15px rgba(74, 144, 226, 0.8),
+        0 0 30px rgba(74, 144, 226, 0.6),
+        0 0 45px rgba(74, 144, 226, 0.4);
+    font-weight: 900;
+    animation: tech-glow-blue 2s ease-in-out infinite alternate;
+}
+
+.typewriter-text .js-word {
+    color: #ffd700;
+    text-shadow: 
+        0 0 15px rgba(255, 215, 0, 0.8),
+        0 0 30px rgba(255, 215, 0, 0.6),
+        0 0 45px rgba(255, 215, 0, 0.4);
+    font-weight: 900;
+    animation: tech-glow-yellow 2s ease-in-out infinite alternate;
+}
+
+/* Animaciones para las palabras tecnológicas */
+@keyframes tech-glow-orange {
+    0% { text-shadow: 0 0 15px rgba(255, 140, 66, 0.8), 0 0 30px rgba(255, 140, 66, 0.6); }
+    100% { text-shadow: 0 0 25px rgba(255, 140, 66, 1), 0 0 40px rgba(255, 140, 66, 0.8); }
+}
+
+@keyframes tech-glow-blue {
+    0% { text-shadow: 0 0 15px rgba(74, 144, 226, 0.8), 0 0 30px rgba(74, 144, 226, 0.6); }
+    100% { text-shadow: 0 0 25px rgba(74, 144, 226, 1), 0 0 40px rgba(74, 144, 226, 0.8); }
+}
+
+@keyframes tech-glow-yellow {
+    0% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6); }
+    100% { text-shadow: 0 0 25px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.8); }
+}
+
+.cursor {
+    font-size: 3rem;
+    color: #00ffff;
+    animation: cursor-blink 1s infinite;
+    margin-left: 4px;
+    font-family: var(--font-family-gaming);
+    font-weight: 900;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+}
+
+@keyframes cursor-blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.start-adventure-btn {
+    position: relative;
+    background: linear-gradient(135deg, 
+        rgba(0, 255, 255, 0.3) 0%, 
+        rgba(255, 0, 150, 0.3) 100%);
+    color: #00ffff;
+    border: 3px solid #00ffff;
+    padding: var(--spacing-5) var(--spacing-8);
+    border-radius: 15px;
+    font-size: var(--font-size-lg);
+    font-weight: 800;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-3);
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 15px rgba(0, 255, 255, 0.9);
+    box-shadow: 
+        0 0 30px rgba(0, 255, 255, 0.5),
+        inset 0 0 30px rgba(0, 255, 255, 0.1);
+    animation: start-btn-pulse 3s ease-in-out infinite;
+    transform: translateY(20px);
+    opacity: 0;
+}
+
+.start-adventure-btn.show {
+    transform: translateY(0);
+    opacity: 1;
+    transition: all 1s ease-out 0.5s;
+}
+
+@keyframes start-btn-pulse {
+    0%, 100% { 
+        box-shadow: 
+            0 0 30px rgba(0, 255, 255, 0.5),
+            inset 0 0 30px rgba(0, 255, 255, 0.1);
+    }
+    50% { 
+        box-shadow: 
+            0 0 40px rgba(0, 255, 255, 0.8),
+            0 0 60px rgba(255, 0, 150, 0.4),
+            inset 0 0 40px rgba(0, 255, 255, 0.2);
+    }
+}
+
+.start-adventure-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 
+        0 0 50px rgba(0, 255, 255, 0.8),
+        0 0 80px rgba(255, 0, 150, 0.5),
+        inset 0 0 50px rgba(0, 255, 255, 0.2);
+}
+
+@keyframes intro-appear {
+    0% { 
+        opacity: 0; 
+        backdrop-filter: blur(0px);
+    }
+    100% { 
+        opacity: 1; 
+        backdrop-filter: blur(15px);
+    }
+}
+
+/* ===================================
    PANTALLA DE BIENVENIDA
    =================================== */
 .welcome-screen {
@@ -345,46 +574,71 @@ body.big-bang {
 }
 
 .welcome-container {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
-    backdrop-filter: blur(20px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    padding: var(--spacing-5);
-    max-width: 420px;
-    width: 90%;
-    min-width: 300px;
-    max-height: 90vh;
+    background: linear-gradient(135deg, 
+        rgba(10, 15, 30, 0.95) 0%, 
+        rgba(20, 25, 45, 0.9) 50%,
+        rgba(15, 20, 40, 0.95) 100%);
+    backdrop-filter: blur(25px);
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 600px;
+    width: 94%;
+    min-width: 380px;
+    max-height: 88vh;
     box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.2),
-        0 0 60px rgba(59, 130, 246, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        0 0 40px rgba(0, 255, 255, 0.3),
+        0 0 80px rgba(255, 0, 150, 0.2),
+        inset 0 1px 0 rgba(0, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(255, 0, 150, 0.1);
     position: relative;
     overflow-y: auto;
     overflow-x: hidden;
-    animation: welcome-appear 1s ease-out;
+    animation: welcome-appear 1s ease-out, neon-glow 4s ease-in-out infinite;
     display: flex;
     flex-direction: column;
     scroll-behavior: smooth;
 }
 
-/* Scrollbar personalizado para el contenedor */
+/* Animación neon para el container */
+@keyframes neon-glow {
+    0%, 100% { 
+        box-shadow: 
+            0 0 40px rgba(0, 255, 255, 0.3),
+            0 0 80px rgba(255, 0, 150, 0.2),
+            inset 0 1px 0 rgba(0, 255, 255, 0.2),
+            inset 0 -1px 0 rgba(255, 0, 150, 0.1);
+    }
+    50% { 
+        box-shadow: 
+            0 0 50px rgba(0, 255, 255, 0.4),
+            0 0 100px rgba(255, 0, 150, 0.3),
+            inset 0 1px 0 rgba(0, 255, 255, 0.3),
+            inset 0 -1px 0 rgba(255, 0, 150, 0.2);
+    }
+}
+
+/* Scrollbar personalizado retro neon */
 .welcome-container::-webkit-scrollbar {
-    width: 6px;
+    width: 10px;
 }
 
 .welcome-container::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 5px;
+    border: 1px solid rgba(0, 255, 255, 0.2);
 }
 
 .welcome-container::-webkit-scrollbar-thumb {
-    background: rgba(59, 130, 246, 0.4);
-    border-radius: 10px;
-    transition: background 0.3s ease;
+    background: linear-gradient(180deg, rgba(0, 255, 255, 0.7), rgba(255, 0, 150, 0.7));
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
 }
 
 .welcome-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(59, 130, 246, 0.6);
+    background: linear-gradient(180deg, rgba(0, 255, 255, 0.9), rgba(255, 0, 150, 0.9));
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
 }
 
 @keyframes welcome-appear {
@@ -400,95 +654,147 @@ body.big-bang {
 
 .welcome-header {
     text-align: center;
-    margin-bottom: var(--spacing-5);
+    margin-bottom: var(--spacing-6);
     flex-shrink: 0;
+    padding: var(--spacing-3);
 }
 
 .welcome-header h1 {
     font-size: var(--font-size-2xl);
-    font-weight: 700;
-    background: linear-gradient(135deg, #1e293b, #3b82f6, #8b5cf6);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: var(--spacing-2);
-    animation: title-glow 2s ease-in-out infinite alternate;
+    font-weight: 800;
+    color: #00ffff;
+    text-shadow: 
+        0 0 10px rgba(0, 255, 255, 0.8),
+        0 0 20px rgba(0, 255, 255, 0.6),
+        0 0 30px rgba(0, 255, 255, 0.4);
+    margin-bottom: var(--spacing-3);
+    animation: neon-title-pulse 3s ease-in-out infinite;
     line-height: 1.2;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'Courier New', monospace;
 }
 
-@keyframes title-glow {
-    0% { filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.3)); }
-    100% { filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.5)); }
+@keyframes neon-title-pulse {
+    0%, 100% { 
+        color: #00ffff;
+        text-shadow: 
+            0 0 10px rgba(0, 255, 255, 0.8),
+            0 0 20px rgba(0, 255, 255, 0.6),
+            0 0 30px rgba(0, 255, 255, 0.4);
+    }
+    50% { 
+        color: #ff0096;
+        text-shadow: 
+            0 0 10px rgba(255, 0, 150, 0.8),
+            0 0 20px rgba(255, 0, 150, 0.6),
+            0 0 30px rgba(255, 0, 150, 0.4);
+    }
 }
 
 .welcome-header p {
-    color: var(--color-gray-600);
-    font-size: var(--font-size-base);
-    line-height: 1.5;
+    color: #a0a0ff;
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
     margin-bottom: 0;
+    text-shadow: 0 0 5px rgba(160, 160, 255, 0.3);
+    font-family: 'Courier New', monospace;
 }
 
 .player-form {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-4);
+    gap: 20px;
     flex: 1;
-    min-height: 0;
+    min-height: auto;
+    padding: 0;
+    margin: 0;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-1);
+    gap: 8px;
+    position: relative;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
 }
 
 .form-group label {
-    font-weight: 600;
-    color: var(--color-gray-700);
+    font-weight: 700;
+    color: #00ffff;
     font-size: var(--font-size-sm);
-    margin-bottom: var(--spacing-1);
+    margin-bottom: var(--spacing-2);
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'Courier New', monospace;
 }
 
 .form-group input,
 .form-group select {
     padding: var(--spacing-3);
-    border: 2px solid rgba(203, 213, 225, 0.6);
-    border-radius: var(--border-radius);
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    border-radius: 8px;
     font-size: var(--font-size-sm);
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(5px);
-    transition: var(--transition);
-    min-height: 42px;
+    background: rgba(10, 15, 30, 0.8);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    min-height: 44px;
+    color: #ffffff;
+    font-family: 'Courier New', monospace;
+    box-shadow: 
+        inset 0 0 10px rgba(0, 255, 255, 0.1),
+        0 0 5px rgba(0, 255, 255, 0.2);
+}
+
+.form-group input::placeholder,
+.form-group select option {
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Courier New', monospace;
 }
 
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-    background: rgba(255, 255, 255, 0.95);
+    border-color: #ff0096;
+    box-shadow: 
+        0 0 20px rgba(255, 0, 150, 0.4),
+        inset 0 0 15px rgba(255, 0, 150, 0.1);
+    background: rgba(15, 20, 35, 0.9);
+    color: #ffffff;
 }
 
-/* Estados de validación de campos */
+/* Estados de validación de campos - Mantener estilo neon */
 .form-group.field-valid input,
 .form-group.field-valid select {
-    border-color: var(--color-secondary);
-    background: rgba(240, 253, 250, 0.9);
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
+    border-color: #00ff88;
+    background: rgba(10, 20, 15, 0.8);
+    color: #ffffff;
+    box-shadow: 
+        0 0 15px rgba(0, 255, 136, 0.4),
+        inset 0 0 10px rgba(0, 255, 136, 0.1);
 }
 
 .form-group.field-invalid input,
 .form-group.field-invalid select {
-    border-color: var(--color-danger);
-    background: rgba(254, 242, 242, 0.9);
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
+    border-color: #ff3366;
+    background: rgba(20, 10, 15, 0.8);
+    color: #ffffff;
+    box-shadow: 
+        0 0 15px rgba(255, 51, 102, 0.4),
+        inset 0 0 10px rgba(255, 51, 102, 0.1);
     animation: field-shake 0.3s ease-in-out;
 }
 
 .form-group.field-empty input,
 .form-group.field-empty select {
-    border-color: rgba(203, 213, 225, 0.6);
-    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 255, 255, 0.3);
+    background: rgba(10, 15, 30, 0.6);
+    color: #ffffff;
+    box-shadow: 
+        inset 0 0 8px rgba(0, 255, 255, 0.1),
+        0 0 3px rgba(0, 255, 255, 0.2);
 }
 
 /* Animación para campos inválidos */
@@ -498,62 +804,115 @@ body.big-bang {
     75% { transform: translateX(3px); }
 }
 
-/* Feedback de validación */
+/* Feedback de validación - Iconos sutiles a la derecha */
 .field-feedback {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
     display: flex;
     align-items: center;
-    gap: var(--spacing-2);
-    margin-top: var(--spacing-2);
-    font-size: var(--font-size-sm);
-    font-weight: 500;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    font-weight: 600;
     opacity: 0;
-    transform: translateY(-5px);
     transition: all 0.3s ease-out;
+    z-index: 10;
+    border-radius: 50%;
+    font-family: 'Courier New', monospace;
+    pointer-events: none;
 }
 
 .field-valid .field-feedback {
-    color: var(--color-secondary);
+    color: #00ff88;
+    background: rgba(0, 255, 136, 0.15);
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+}
+
+.field-valid .field-feedback::before {
+    content: "✓";
 }
 
 .field-invalid .field-feedback {
-    color: var(--color-danger);
+    color: #ff6b9d;
+    background: rgba(255, 107, 157, 0.15);
+    box-shadow: 0 0 8px rgba(255, 107, 157, 0.3);
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+}
+
+.field-invalid .field-feedback::before {
+    content: "✗";
 }
 
 .field-empty .field-feedback {
-    color: var(--color-gray-600);
+    color: #8cc8ff;
+    background: rgba(140, 200, 255, 0.15);
+    box-shadow: 0 0 8px rgba(140, 200, 255, 0.3);
+    opacity: 0.7;
+    transform: translateY(-50%) scale(1);
 }
 
-/* Indicador de progreso del formulario */
+.field-empty .field-feedback::before {
+    content: "?";
+}
+
+/* Indicador de progreso del formulario - Estilo Neon */
 .form-progress {
     margin-bottom: var(--spacing-6);
-    padding: var(--spacing-3);
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius);
-    backdrop-filter: blur(10px);
+    padding: var(--spacing-4);
+    background: rgba(10, 15, 30, 0.6);
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    border-radius: 10px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+    display: none;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.5s ease-in-out;
+}
+
+.form-progress.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .form-progress-label {
     font-size: var(--font-size-sm);
-    color: var(--color-gray-600);
-    margin-bottom: var(--spacing-2);
+    color: #00ffff;
+    margin-bottom: var(--spacing-3);
     display: block;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.6);
 }
 
 .form-progress-bar {
-    height: 6px;
-    background: rgba(203, 213, 225, 0.3);
-    border-radius: 3px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 255, 0.4);
+    border-radius: 6px;
     overflow: hidden;
     position: relative;
+    box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.2);
 }
 
 .form-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--color-secondary), var(--color-primary));
-    border-radius: 3px;
+    background: linear-gradient(90deg, 
+        rgba(0, 255, 255, 0.8) 0%, 
+        rgba(255, 0, 150, 0.8) 100%);
+    border-radius: 4px;
     transition: width 0.4s ease-out;
     position: relative;
     width: 0%;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
 }
 
 .form-progress-fill::after {
@@ -569,10 +928,12 @@ body.big-bang {
 
 .form-progress-text {
     font-size: var(--font-size-sm);
-    color: var(--color-gray-700);
-    margin-top: var(--spacing-2);
+    color: #a0a0ff;
+    margin-top: var(--spacing-3);
     text-align: center;
-    font-weight: 600;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 0 5px rgba(160, 160, 255, 0.4);
 }
 
 /* Estados de la barra de progreso */
@@ -596,126 +957,208 @@ body.big-bang {
 
 .start-game-btn {
     position: relative;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-    color: white;
-    border: none;
-    padding: var(--spacing-3) var(--spacing-5);
-    border-radius: var(--border-radius);
-    font-size: var(--font-size-base);
-    font-weight: 700;
+    background: linear-gradient(135deg, 
+        rgba(0, 255, 255, 0.2) 0%, 
+        rgba(255, 0, 150, 0.2) 100%);
+    color: #00ffff;
+    border: 2px solid #00ffff;
+    padding: 16px 24px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 800;
     cursor: pointer;
     overflow: hidden;
-    transition: var(--transition);
-    margin: var(--spacing-4) auto var(--spacing-2) auto;
+    transition: all 0.3s ease;
+    margin: 20px auto 10px auto;
     width: 100%;
-    max-width: 280px;
-    min-height: 48px;
+    max-width: 340px;
+    min-height: 56px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-2);
+    gap: 8px;
     z-index: 100;
     flex-shrink: 0;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
     box-shadow: 
-        0 8px 20px var(--color-primary-alpha-30),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        0 0 20px rgba(0, 255, 255, 0.4),
+        inset 0 0 20px rgba(0, 255, 255, 0.1);
+    animation: neon-button-pulse 2s ease-in-out infinite;
+    align-self: center;
 }
 
 @media (max-width: 768px) {
     .welcome-container {
-        padding: var(--spacing-4);
+        padding: 20px;
         max-width: 95%;
-        max-height: 95vh;
+        max-height: 90vh;
+        border-radius: 12px;
+        min-width: 320px;
     }
     
     .welcome-header h1 {
-        font-size: var(--font-size-xl);
-        margin-bottom: var(--spacing-1);
+        font-size: 20px;
+        margin-bottom: 8px;
     }
     
     .welcome-header p {
-        font-size: var(--font-size-sm);
+        font-size: 14px;
     }
     
     .welcome-header {
-        margin-bottom: var(--spacing-3);
+        margin-bottom: 16px;
+        padding: 0;
     }
     
     .player-form {
-        gap: var(--spacing-3);
+        gap: 16px;
+        padding: 0;
+        margin: 0;
     }
     
     .form-group {
-        gap: var(--spacing-1);
+        gap: 6px;
+        margin-bottom: 24px;
+        padding-bottom: 8px;
     }
     
     .form-group input,
     .form-group select {
-        padding: var(--spacing-2);
-        font-size: var(--font-size-sm);
-        min-height: 40px;
+        padding: 12px;
+        font-size: 14px;
+        min-height: 44px;
+    }
+    
+    .field-feedback {
+        font-size: 11px;
+        padding: 3px 8px;
+        min-height: 18px;
+        border-radius: 3px;
+        top: calc(100% + 3px);
     }
     
     .start-game-btn {
-        padding: var(--spacing-2) var(--spacing-4);
-        font-size: var(--font-size-sm);
+        padding: 12px 20px;
+        font-size: 14px;
         max-width: 100%;
-        min-height: 44px;
-        margin: var(--spacing-3) auto var(--spacing-2) auto;
+        min-height: 50px;
+        margin: 16px auto 8px auto;
+    }
+    
+    /* Ajustar tamaño de typewriter en tablets */
+    .typewriter-text {
+        font-size: 2.2rem;
+        line-height: 1.3;
+    }
+    
+    .cursor {
+        font-size: 2.2rem;
     }
 }
 
 /* Media query para pantallas muy pequeñas (móviles horizontales) */
 @media (max-width: 480px), (max-height: 600px) {
     .welcome-container {
-        padding: var(--spacing-3);
-        max-height: 98vh;
-        border-radius: 15px;
+        padding: 16px;
+        max-height: 94vh;
+        border-radius: 10px;
+        min-width: 280px;
+        max-width: 98%;
     }
     
     .welcome-header h1 {
-        font-size: var(--font-size-lg);
-        margin-bottom: 0;
+        font-size: 18px;
+        margin-bottom: 4px;
     }
     
     .welcome-header p {
-        font-size: var(--font-size-xs);
+        font-size: 12px;
         line-height: 1.4;
     }
     
     .welcome-header {
-        margin-bottom: var(--spacing-2);
+        margin-bottom: 12px;
     }
     
     .player-form {
-        gap: var(--spacing-2);
+        gap: 12px;
+        margin: 0;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+        padding-bottom: 6px;
     }
     
     .form-group label {
-        font-size: var(--font-size-xs);
-        margin-bottom: 0;
+        font-size: 12px;
+        margin-bottom: 4px;
     }
     
     .form-group input,
     .form-group select {
-        padding: var(--spacing-2);
-        font-size: var(--font-size-xs);
-        min-height: 36px;
+        padding: 8px 12px;
+        font-size: 12px;
+        min-height: 38px;
+    }
+    
+    .field-feedback {
+        font-size: 10px;
+        padding: 3px 6px;
+        min-height: 16px;
+        top: calc(100% + 2px);
+        border-radius: 2px;
     }
     
     .start-game-btn {
-        padding: var(--spacing-2) var(--spacing-3);
-        font-size: var(--font-size-xs);
-        min-height: 40px;
-        margin: var(--spacing-2) auto;
+        padding: 10px 16px;
+        font-size: 12px;
+        min-height: 42px;
+        margin: 12px auto 6px auto;
+        max-width: 100%;
+    }
+    
+    /* Ajustar tamaño de typewriter en móviles pequeños */
+    .typewriter-text {
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+    
+    .cursor {
+        font-size: 1.8rem;
+    }
+}
+
+/* Animación neon para el botón */
+@keyframes neon-button-pulse {
+    0%, 100% { 
+        box-shadow: 
+            0 0 20px rgba(0, 255, 255, 0.4),
+            inset 0 0 20px rgba(0, 255, 255, 0.1);
+        border-color: #00ffff;
+    }
+    50% { 
+        box-shadow: 
+            0 0 30px rgba(255, 0, 150, 0.6),
+            inset 0 0 30px rgba(255, 0, 150, 0.2);
+        border-color: #ff0096;
     }
 }
 
 .start-game-btn:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px) scale(1.02);
+    color: #ff0096;
+    border-color: #ff0096;
+    text-shadow: 0 0 15px rgba(255, 0, 150, 1);
     box-shadow: 
-        0 15px 35px rgba(59, 130, 246, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        0 0 40px rgba(255, 0, 150, 0.8),
+        inset 0 0 30px rgba(255, 0, 150, 0.2);
+    background: linear-gradient(135deg, 
+        rgba(255, 0, 150, 0.3) 0%, 
+        rgba(0, 255, 255, 0.2) 100%);
 }
 
 .start-game-btn span {

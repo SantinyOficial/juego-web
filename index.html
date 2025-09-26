@@ -8,12 +8,25 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="phase-1">
+    <!-- Pantalla de Animación Inicial -->
+    <section id="intro-animation" class="intro-animation">
+        <div class="intro-container">
+            <div class="typewriter-container">
+                <h1 id="typewriter-text" class="typewriter-text"></h1>
+                <div class="cursor" id="cursor">|</div>
+            </div>
+            <button id="start-adventure-btn" class="start-adventure-btn hidden">
+                <span>🚀 Empezar</span>
+                <div class="btn-particles"></div>
+            </button>
+        </div>
+    </section>
+
     <!-- Pantalla de Bienvenida -->
-    <section id="welcome-screen" class="welcome-screen">
+    <section id="welcome-screen" class="welcome-screen hidden">
         <div class="welcome-container">
-            <div class="welcome-header">
-                <h1>🎯 Bienvenido al Juego HTML Semántico</h1>
-                <p>Aprende HTML mientras te diviertes. ¡Registra tus datos y comienza la aventura!</p>
+            <div class="welcome-header" id="form-intro">
+                <p>¡Registra tus datos y comienza la aventura!</p>
             </div>
             
             <form id="player-form" class="player-form">
