@@ -8,11 +8,95 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <main class="game-container">
-        <header class="game-header">
-            <h1>🎯 Aprende HTML Semántico</h1>
-            <p>Arrastra las etiquetas HTML a las zonas correctas para construir una página web</p>
-        </header>
+    <!-- Pantalla de Bienvenida -->
+    <section id="welcome-screen" class="welcome-screen">
+        <div class="welcome-container">
+            <div class="welcome-header">
+                <h1>🎯 Bienvenido al Juego HTML Semántico</h1>
+                <p>Aprende HTML mientras te diviertes. ¡Registra tus datos y comienza la aventura!</p>
+            </div>
+            
+            <form id="player-form" class="player-form">
+                <!-- Indicador de progreso del formulario -->
+                <div class="form-progress">
+                    <label class="form-progress-label">Progreso del registro</label>
+                    <div class="form-progress-bar">
+                        <div id="form-progress-fill" class="form-progress-fill"></div>
+                    </div>
+                    <span id="form-progress-text" class="form-progress-text">0% completado</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="playerName">👤 Nombre del Jugador</label>
+                    <input type="text" id="playerName" name="playerName" required 
+                           placeholder="Ingresa tu nombre" maxlength="30" autocomplete="given-name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="playerEmail">📧 Correo Electrónico</label>
+                    <input type="email" id="playerEmail" name="playerEmail" required 
+                           placeholder="tu@email.com" autocomplete="email" maxlength="320">
+                </div>
+                
+                <div class="form-group">
+                    <label for="playerLevel">🎓 Nivel de Experiencia</label>
+                    <select id="playerLevel" name="playerLevel" required>
+                        <option value="">Selecciona tu nivel</option>
+                        <option value="beginner">🌱 Principiante - Nuevo en HTML</option>
+                        <option value="intermediate">⚡ Intermedio - Conozco algo de HTML</option>
+                        <option value="advanced">🚀 Avanzado - Domino HTML semántico</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="start-game-btn">
+                    <span>🎮 Comenzar Juego</span>
+                    <div class="btn-particles"></div>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Juego Principal -->
+    <main id="game-container" class="game-container hidden">
+        <!-- Panel de Jugador -->
+        <aside class="player-panel">
+            <div class="player-info">
+                <div class="player-avatar">👤</div>
+                <div class="player-details">
+                    <h3 id="display-name">Jugador</h3>
+                    <span id="display-level" class="player-level">Principiante</span>
+                </div>
+            </div>
+            
+            <div class="score-board">
+                <div class="score-item">
+                    <span class="score-label">🎯 Puntaje</span>
+                    <span id="total-score" class="score-value">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">⭐ Racha</span>
+                    <span id="streak-count" class="score-value">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">🏆 Nivel</span>
+                    <span id="current-level" class="score-value">1</span>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <label class="progress-label">Progreso del Nivel</label>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <span id="progress-text" class="progress-text">0 / 100 XP</span>
+            </div>
+        </aside>
+
+        <div class="game-main">
+            <header class="game-header">
+                <h1>🎯 Aprende HTML Semántico</h1>
+                <p>Arrastra las etiquetas HTML a las zonas correctas para construir una página web</p>
+            </header>
 
         <section class="game-board">
             <h2>Plantilla de Página Web</h2>
@@ -87,9 +171,19 @@
             </div>
             
             <button id="reset-game" class="reset-btn">🔄 Reiniciar</button>
-        </aside>
+            </div>
+            
+            <div class="achievements">
+                <h3>🏅 Logros Recientes</h3>
+                <div id="achievements-list" class="achievements-list">
+                    <!-- Los logros se generarán dinámicamente -->
+                </div>
+            </div>
+        </div>
+        </div>
     </main>
 
+    <script src="js/validaciones.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
