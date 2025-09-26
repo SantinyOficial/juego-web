@@ -1444,47 +1444,6 @@ class HTMLSemanticGame {
     }
 
     /**
-     * Dispara un barrido de color para celebrar el nivel completado
-     */
-    triggerLevelSweep(levelKey) {
-        if (!['html', 'css'].includes(levelKey)) {
-            return;
-        }
-
-        const sweep = document.createElement('div');
-        sweep.className = `level-sweep level-sweep-${levelKey}`;
-        sweep.setAttribute('aria-hidden', 'true');
-
-        document.body.appendChild(sweep);
-
-        let fallbackRemoval;
-
-        const cleanup = () => {
-            sweep.removeEventListener('animationend', onAnimationEnd);
-            if (fallbackRemoval) {
-                clearTimeout(fallbackRemoval);
-            }
-            if (sweep.parentNode) {
-                sweep.parentNode.removeChild(sweep);
-            }
-        };
-
-        const onAnimationEnd = () => {
-            clearTimeout(fallbackRemoval);
-            cleanup();
-        };
-
-        sweep.addEventListener('animationend', onAnimationEnd);
-
-    fallbackRemoval = setTimeout(cleanup, 2200);
-
-        if (window.GameAudio) {
-            const sounds = levelKey === 'css' ? ['success', 'levelUp'] : ['levelUp'];
-            window.GameAudio.playSequence?.(sounds, 250);
-        }
-    }
-
-    /**
      * Verifica la progresión entre fases basada en elementos completados
      */
     checkPhaseProgression(tagType) {
@@ -2571,9 +2530,6 @@ class HTMLSemanticGame {
 
         const config = this.gameConfigs[this.currentGame];
         this.showMissionCelebration(this.currentGame, config);
-        if (this.currentGame === 'html' || this.currentGame === 'css') {
-            this.triggerLevelSweep(this.currentGame);
-        }
         this.showNotification(config.completionMessage, 'success');
         
         if (this.currentGame === 'html') {

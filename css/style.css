@@ -478,40 +478,47 @@ body.big-bang {
 
 .audio-controls {
     position: absolute;
-    top: var(--spacing-5);
-    right: var(--spacing-5);
+    top: var(--spacing-4);
+    right: var(--spacing-4);
     display: flex;
     gap: var(--spacing-2);
     z-index: 10;
 }
 
 .audio-btn {
-    background: linear-gradient(140deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.85));
-    border: 1px solid rgba(148, 163, 184, 0.5);
-    border-radius: 18px;
-    width: 48px;
-    height: 48px;
+    width: 36px;
+    height: 36px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1rem;
     cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-    backdrop-filter: blur(18px);
-    color: rgba(226, 232, 240, 0.92);
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.45);
+    color: rgba(226, 232, 240, 0.85);
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 24px rgba(8, 11, 24, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    opacity: 0.85;
 }
 
 .audio-btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.55);
-    background: linear-gradient(140deg, rgba(30, 64, 175, 0.9), rgba(56, 189, 248, 0.85));
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 14px 30px rgba(12, 18, 36, 0.4);
+    background: rgba(37, 99, 235, 0.75);
+    opacity: 1;
 }
 
 .audio-btn.muted {
-    background: linear-gradient(140deg, rgba(190, 18, 60, 0.9), rgba(239, 68, 68, 0.85));
-    border-color: rgba(248, 113, 113, 0.6);
-    box-shadow: 0 18px 32px rgba(190, 18, 60, 0.45);
+    background: rgba(239, 68, 68, 0.68);
+    border-color: rgba(248, 113, 113, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 12px 26px rgba(190, 18, 60, 0.32);
+}
+
+.audio-btn.muted:hover {
+    background: rgba(248, 113, 113, 0.78);
 }
 
 .start-adventure-btn {
@@ -1901,35 +1908,39 @@ body.big-bang {
 }
 
 .audio-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    color: var(--color-gray-700);
+    color: rgba(226, 232, 240, 0.85);
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 24px rgba(8, 11, 24, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    opacity: 0.85;
 }
 
 .audio-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.1);
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 14px 30px rgba(12, 18, 36, 0.4);
+    background: rgba(37, 99, 235, 0.75);
+    opacity: 1;
 }
 
 .audio-btn.muted {
-    background: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.5);
-    color: #ef4444;
+    background: rgba(239, 68, 68, 0.68);
+    border-color: rgba(248, 113, 113, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 12px 26px rgba(190, 18, 60, 0.32);
 }
 
 .audio-btn.muted:hover {
-    background: rgba(239, 68, 68, 0.3);
+    background: rgba(248, 113, 113, 0.78);
 }
 
 /* ===================================
@@ -3211,80 +3222,6 @@ body.big-bang {
 }
 
 /* ===================================
-   EFECTOS DE CELEBRACIÓN POR NIVEL
-   =================================== */
-
-.level-sweep {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 900;
-    opacity: 0;
-    transform-origin: center;
-    mix-blend-mode: screen;
-    filter: blur(1px) saturate(1.1);
-    background-size: cover;
-}
-
-.level-sweep-html {
-    background: radial-gradient(circle at 20% 50%, rgba(255, 166, 77, 0.8) 0%, transparent 55%),
-                radial-gradient(circle at 80% 50%, rgba(255, 111, 60, 0.75) 0%, transparent 50%),
-                linear-gradient(120deg, rgba(255, 169, 95, 0.85) 0%, rgba(241, 101, 41, 0.75) 40%, rgba(255, 217, 187, 0.25) 100%);
-    animation: level-sweep-html 1.6s ease-out forwards;
-}
-
-.level-sweep-css {
-    background: radial-gradient(circle at 20% 45%, rgba(41, 101, 241, 0.78) 0%, transparent 55%),
-                radial-gradient(circle at 80% 55%, rgba(110, 197, 255, 0.72) 0%, transparent 50%),
-                linear-gradient(135deg, rgba(64, 120, 255, 0.88) 0%, rgba(46, 198, 255, 0.65) 45%, rgba(205, 245, 255, 0.22) 100%);
-    animation: level-sweep-css 1.6s ease-out forwards;
-}
-
-@keyframes level-sweep-html {
-    0% {
-        opacity: 0;
-        transform: scale(0.6) rotate(-6deg) skewX(-6deg);
-    }
-    35% {
-        opacity: 1;
-        transform: scale(1.02) rotate(-3deg) skewX(-3deg);
-    }
-    70% {
-        opacity: 0.85;
-        transform: scale(1.25) rotate(1deg) skewX(2deg);
-    }
-    100% {
-        opacity: 0;
-        transform: scale(1.32) rotate(3deg) skewX(4deg);
-    }
-}
-
-@keyframes level-sweep-css {
-    0% {
-        opacity: 0;
-        transform: scale(0.6) rotate(6deg) skewX(6deg);
-    }
-    40% {
-        opacity: 1;
-        transform: scale(1.05) rotate(3deg) skewX(2deg);
-        filter: blur(0px);
-    }
-    80% {
-        opacity: 0.9;
-        transform: scale(1.28) rotate(-1deg) skewX(-2deg);
-        filter: blur(1px);
-    }
-    100% {
-        opacity: 0;
-        transform: scale(1.35) rotate(-4deg) skewX(-5deg);
-        filter: blur(2px);
-    }
-}
-
-/* ===================================
    NOTIFICACIÓN GAMIFICADA DE MISIONES
    =================================== */
 
@@ -3518,6 +3455,7 @@ body.big-bang {
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-4);
+    position: relative;
 }
 
 .game-header h1 {
@@ -3533,26 +3471,6 @@ body.big-bang {
     max-width: 560px;
     color: rgba(226, 232, 240, 0.85);
     font-size: clamp(0.95rem, 1.2vw, 1.1rem);
-}
-
-.audio-controls .audio-btn {
-    background: linear-gradient(140deg, rgba(15, 23, 42, 0.9), rgba(30, 64, 175, 0.85));
-    border: 1px solid rgba(148, 163, 184, 0.5);
-    border-radius: 18px;
-    width: 48px;
-    height: 48px;
-    display: grid;
-    place-items: center;
-    color: rgba(226, 232, 240, 0.95);
-    font-size: 1.3rem;
-    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.45);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-}
-
-.audio-controls .audio-btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 22px 44px rgba(30, 64, 175, 0.45);
-    background: linear-gradient(140deg, rgba(37, 99, 235, 0.92), rgba(125, 211, 252, 0.88));
 }
 
 .player-panel {
