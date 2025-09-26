@@ -562,9 +562,15 @@ body.big-bang {
     justify-content: center;
     z-index: 1000;
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-    padding: var(--spacing-4);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--spacing-2);
+    padding-top: max(1vh, 10px);
+    padding-bottom: max(1vh, 10px);
     box-sizing: border-box;
+    /* Permitir scroll cuando sea necesario */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 255, 0.6) transparent;
 }
 
 .welcome-screen.fade-out {
@@ -583,9 +589,12 @@ body.big-bang {
     border-radius: 15px;
     padding: 20px;
     max-width: 600px;
-    width: 94%;
-    min-width: 380px;
-    max-height: 88vh;
+    width: calc(100% - 20px);
+    min-width: 320px;
+    /* Sistema híbrido: adapta hasta cierto punto, luego scroll */
+    min-height: auto;
+    height: auto;
+    max-height: calc(100vh - 20px);
     box-shadow: 
         0 0 40px rgba(0, 255, 255, 0.3),
         0 0 80px rgba(255, 0, 150, 0.2),
@@ -598,6 +607,11 @@ body.big-bang {
     display: flex;
     flex-direction: column;
     scroll-behavior: smooth;
+    /* Transición suave para cambios de altura y contenido */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Scrollbar personalizado */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 255, 255, 0.7) rgba(10, 15, 30, 0.3);
 }
 
 /* Animación neon para el container */
@@ -618,27 +632,60 @@ body.big-bang {
     }
 }
 
-/* Scrollbar personalizado retro neon */
+/* Scrollbar personalizado retro neon - MEJORADO */
 .welcome-container::-webkit-scrollbar {
-    width: 10px;
+    width: 12px;
 }
 
 .welcome-container::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 5px;
-    border: 1px solid rgba(0, 255, 255, 0.2);
+    background: rgba(10, 15, 30, 0.6);
+    border-radius: 6px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 
 .welcome-container::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, rgba(0, 255, 255, 0.7), rgba(255, 0, 150, 0.7));
-    border-radius: 5px;
+    background: linear-gradient(180deg, 
+        rgba(0, 255, 255, 0.8) 0%, 
+        rgba(0, 200, 255, 0.6) 50%,
+        rgba(255, 0, 150, 0.5) 100%);
+    border-radius: 6px;
+    border: 1px solid rgba(0, 255, 255, 0.4);
     transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
 }
 
 .welcome-container::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, rgba(0, 255, 255, 0.9), rgba(255, 0, 150, 0.9));
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+    background: linear-gradient(180deg, 
+        rgba(0, 255, 255, 1) 0%, 
+        rgba(0, 200, 255, 0.8) 50%,
+        rgba(255, 0, 150, 0.7) 100%);
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
+}
+
+/* Scrollbar para el welcome-screen también */
+.welcome-screen::-webkit-scrollbar {
+    width: 14px;
+}
+
+.welcome-screen::-webkit-scrollbar-track {
+    background: rgba(5, 10, 20, 0.7);
+    border-radius: 7px;
+}
+
+.welcome-screen::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, 
+        rgba(0, 255, 255, 0.9) 0%, 
+        rgba(255, 0, 150, 0.6) 100%);
+    border-radius: 7px;
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+}
+
+.welcome-screen::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, 
+        rgba(0, 255, 255, 1) 0%, 
+        rgba(255, 0, 150, 0.8) 100%);
 }
 
 @keyframes welcome-appear {
@@ -709,6 +756,9 @@ body.big-bang {
     min-height: auto;
     padding: 0;
     margin: 0;
+    width: 100%;
+    /* Permitir que el formulario se expanda */
+    overflow: visible;
 }
 
 .form-group {
@@ -716,8 +766,159 @@ body.big-bang {
     flex-direction: column;
     gap: 8px;
     position: relative;
-    margin-bottom: 30px;
-    padding-bottom: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 6px;
+    width: 100%;
+    /* Adaptación fluida al contenido dinámico */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: auto;
+}
+
+/* Cuando hay feedback, expandir dinámicamente */
+.form-group:has(.field-feedback) {
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    min-height: auto;
+}
+
+/* Fallback para navegadores que no soportan :has() */
+.form-group.field-valid,
+.form-group.field-invalid,
+.form-group.field-empty {
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+}
+
+/* Cuando el feedback está activo, asegurar espacio óptimo */
+.form-group.has-feedback {
+    margin-bottom: 36px;
+    padding-bottom: 18px;
+}
+
+/* Contenedor de formulario que se adapta dinámicamente */
+.player-form {
+    flex: 1;
+    width: 100%;
+    min-height: auto;
+    overflow: visible;
+    padding: 0;
+    margin: 0;
+    /* Permitir crecimiento natural */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Texto de ayuda inline amigable */
+.field-help {
+    font-size: 12px;
+    color: rgba(140, 200, 255, 0.8);
+    margin-top: 4px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.field-help::before {
+    content: "💡";
+    font-size: 11px;
+}
+
+/* Contenedor de input con indicador */
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-container input,
+.input-container select {
+    width: 100%;
+    padding-right: 45px; /* Espacio para el indicador */
+}
+
+/* Animaciones suaves para transiciones de estado */
+.form-group {
+    transition: all 0.3s ease;
+}
+
+.form-group:focus-within {
+    transform: translateY(-2px);
+}
+
+/* Mejora visual para labels */
+.form-group label {
+    margin-bottom: 6px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Estados hover mejorados */
+.form-group:hover .field-help {
+    color: rgba(140, 200, 255, 1);
+    transform: translateX(2px);
+}
+
+/* Respuesta visual al focus */
+.input-container:focus-within {
+    transform: scale(1.02);
+}
+
+/* Mejoras de UX adicionales */
+.form-group input:focus,
+.form-group select:focus {
+    transform: none; /* Evitar doble transformación */
+    box-shadow: 
+        0 0 0 2px rgba(0, 255, 255, 0.3),
+        0 4px 12px rgba(0, 255, 255, 0.2);
+}
+
+/* Feedback positivo sutil */
+.field-valid .input-container {
+    animation: gentle-success-pulse 0.6s ease-out;
+}
+
+@keyframes gentle-success-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+/* Estados mejorados para mensajes de ayuda */
+.field-help {
+    transition: all 0.3s ease;
+}
+
+.form-group:focus-within .field-help {
+    color: rgba(140, 200, 255, 1);
+    transform: translateX(4px);
+}
+
+/* Placeholder mejorado */
+.form-group input::placeholder,
+.form-group select option:first-child {
+    color: rgba(140, 200, 255, 0.6);
+    font-style: italic;
+}
+
+/* Microinteracciones suaves */
+.field-feedback {
+    animation: slideInFromLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInFromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px) translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+    }
 }
 
 .form-group label {
@@ -804,8 +1005,27 @@ body.big-bang {
     75% { transform: translateX(3px); }
 }
 
-/* Feedback de validación - Iconos sutiles a la derecha */
+/* Sistema de feedback UX mejorado */
 .field-feedback {
+    position: static;
+    margin-top: 8px;
+    padding: 10px 15px;
+    background: rgba(10, 15, 30, 0.8);
+    border-radius: 8px;
+    border-left: 3px solid transparent;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Indicador visual en el campo (icono a la derecha) */
+.field-indicator {
     position: absolute;
     top: 50%;
     right: 12px;
@@ -825,39 +1045,160 @@ body.big-bang {
     pointer-events: none;
 }
 
+/* ===================================
+   SISTEMA DE ADAPTABILIDAD DINÁMICO
+   =================================== */
+
+/* Contenedor que se adapta automáticamente */
+.container-adaptive {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    resize: none;
+    /* Flexibilidad total para el contenido */
+    height: auto !important;
+    min-height: auto !important;
+    max-height: calc(100vh - 20px) !important;
+}
+
+/* Modo expandido para contenido dinámico */
+.form-expanded {
+    /* Permitir crecimiento natural del contenido */
+    height: auto !important;
+    min-height: auto !important;
+    /* Transición suave para cambios */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Contenedor con feedback de validación activo */
+.welcome-container.has-validation-feedback {
+    /* Espacio adicional para mensajes */
+    padding-bottom: 24px !important;
+    /* Asegurar que todo el contenido sea visible */
+    min-height: auto !important;
+}
+
+/* Forzar scroll cuando es necesario */
+.welcome-container.force-scroll {
+    overflow-y: auto !important;
+    max-height: calc(100vh - 20px) !important;
+    height: calc(100vh - 20px) !important;
+}
+
+/* Estado sin scroll cuando el contenido cabe */
+.welcome-container.no-scroll {
+    overflow-y: visible !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
+/* Animación suave para aparición de feedback */
+.field-feedback {
+    animation: feedbackSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes feedbackSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Transición suave cuando se remueve el feedback */
+.field-feedback.removing {
+    animation: feedbackSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes feedbackSlideOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+}
+
+/* Estados de feedback mejorados */
 .field-valid .field-feedback {
     color: #00ff88;
-    background: rgba(0, 255, 136, 0.15);
-    box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+    background: rgba(0, 255, 136, 0.12);
+    border-left-color: #00ff88;
     opacity: 1;
-    transform: translateY(-50%) scale(1);
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(0, 255, 136, 0.15);
 }
 
 .field-valid .field-feedback::before {
-    content: "✓";
+    content: "✓ ";
+    font-weight: bold;
+    margin-right: 6px;
 }
 
 .field-invalid .field-feedback {
     color: #ff6b9d;
-    background: rgba(255, 107, 157, 0.15);
-    box-shadow: 0 0 8px rgba(255, 107, 157, 0.3);
+    background: rgba(255, 107, 157, 0.12);
+    border-left-color: #ff6b9d;
     opacity: 1;
-    transform: translateY(-50%) scale(1);
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(255, 107, 157, 0.15);
 }
 
 .field-invalid .field-feedback::before {
-    content: "✗";
+    content: "⚠ ";
+    font-weight: bold;
+    margin-right: 6px;
 }
 
 .field-empty .field-feedback {
     color: #8cc8ff;
-    background: rgba(140, 200, 255, 0.15);
-    box-shadow: 0 0 8px rgba(140, 200, 255, 0.3);
-    opacity: 0.7;
-    transform: translateY(-50%) scale(1);
+    background: rgba(140, 200, 255, 0.12);
+    border-left-color: #8cc8ff;
+    opacity: 0.9;
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(140, 200, 255, 0.15);
 }
 
 .field-empty .field-feedback::before {
+    content: "💡 ";
+    margin-right: 6px;
+}
+
+/* Indicadores visuales en los campos */
+.field-valid .field-indicator {
+    color: #00ff88;
+    background: rgba(0, 255, 136, 0.15);
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+    opacity: 1;
+}
+
+.field-valid .field-indicator::before {
+    content: "✓";
+}
+
+.field-invalid .field-indicator {
+    color: #ff6b9d;
+    background: rgba(255, 107, 157, 0.15);
+    box-shadow: 0 0 8px rgba(255, 107, 157, 0.3);
+    opacity: 1;
+}
+
+.field-invalid .field-indicator::before {
+    content: "✗";
+}
+
+.field-empty .field-indicator {
+    color: #8cc8ff;
+    background: rgba(140, 200, 255, 0.15);
+    box-shadow: 0 0 8px rgba(140, 200, 255, 0.3);
+    opacity: 0.7;
+}
+
+.field-empty .field-indicator::before {
     content: "?";
 }
 

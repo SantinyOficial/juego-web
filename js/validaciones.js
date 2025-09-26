@@ -19,8 +19,56 @@ class FormValidator {
     init() {
         this.setupValidationRules();
         this.setupErrorMessages();
+        this.setupResizeObserver();
         console.log('✅ Sistema de validaciones inicializado');
         this.initialized = true;
+    }
+
+    /**
+     * Configura el observador de redimensionamiento para adaptabilidad
+     */
+    setupResizeObserver() {
+        // Escuchar cambios de tamaño de ventana con throttling
+        let resizeTimer;
+        const handleResize = () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                console.log('🔄 Redimensionamiento detectado, reajustando contenedor...');
+                this.ensureContainerAdaptability();
+            }, 150);
+        };
+        
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(handleResize, 300); // Esperar que complete la rotación
+        });
+
+        // Usar ResizeObserver para detectar cambios en el contenido
+        if (window.ResizeObserver) {
+            const contentObserver = new ResizeObserver((entries) => {
+                console.log('📏 Cambio de contenido detectado');
+                this.ensureContainerAdaptability();
+            });
+
+            // Observar cambios en el formulario y contenedor
+            const setupObserver = () => {
+                const form = document.querySelector('.player-form');
+                const container = document.querySelector('.welcome-container');
+                
+                if (form) {
+                    contentObserver.observe(form);
+                    console.log('👁️ ResizeObserver configurado para el formulario');
+                }
+                
+                if (container) {
+                    contentObserver.observe(container);
+                    console.log('👁️ ResizeObserver configurado para el contenedor');
+                }
+            };
+            
+            // Configurar con delay para asegurar que los elementos estén disponibles
+            setTimeout(setupObserver, 500);
+        }
     }
 
     /**
@@ -296,7 +344,7 @@ class FormValidator {
     }
 
     /**
-     * Muestra feedback visual para un campo
+     * Muestra feedback visual para un campo de forma amigable
      * @param {HTMLElement} field - Elemento del campo
      * @param {Object} validation - Resultado de validación
      */
@@ -309,41 +357,111 @@ class FormValidator {
         // Remover feedback anterior
         this.clearFieldFeedback(fieldContainer);
 
+        // Crear o encontrar el indicador visual del campo
+        let indicator = fieldContainer.querySelector('.field-indicator');
+        if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.className = 'field-indicator';
+            
+            // Buscar el contenedor del input o crear uno
+            let inputContainer = fieldContainer.querySelector('.input-container');
+            if (!inputContainer) {
+                inputContainer = document.createElement('div');
+                inputContainer.className = 'input-container';
+                const input = fieldContainer.querySelector('input, select');
+                if (input && input.parentNode === fieldContainer) {
+                    fieldContainer.insertBefore(inputContainer, input);
+                    inputContainer.appendChild(input);
+                }
+            }
+            
+            if (inputContainer) {
+                inputContainer.appendChild(indicator);
+            }
+        }
+
         // Agregar clases CSS según el estado
-        fieldContainer.classList.remove('field-valid', 'field-invalid', 'field-empty');
+        fieldContainer.classList.remove('field-valid', 'field-invalid', 'field-empty', 'has-feedback');
         
         if (!validation.message) {
             fieldContainer.classList.add('field-empty');
         } else if (validation.isValid) {
-            fieldContainer.classList.add('field-valid');
+            fieldContainer.classList.add('field-valid', 'has-feedback');
             // Sonido de validación exitosa
             if (window.GameAudio) {
                 window.GameAudio.playSound('validation-success', { volume: 0.6 });
             }
         } else {
-            fieldContainer.classList.add('field-invalid');
+            fieldContainer.classList.add('field-invalid', 'has-feedback');
             // Sonido de error de validación
             if (window.GameAudio) {
                 window.GameAudio.playSound('validation-error', { volume: 0.4 });
             }
         }
 
-        // Crear elemento de feedback
+        // Asegurar que el contenedor principal se adapte al contenido
+        this.ensureContainerAdaptability();
+
+        // Crear elemento de feedback amigable
         if (validation.message) {
             const feedback = document.createElement('div');
             feedback.className = 'field-feedback';
-            feedback.textContent = validation.message;
+            
+            // Crear mensaje más amigable y útil
+            const friendlyMessage = this.createFriendlyMessage(field.name || field.id, validation);
+            feedback.innerHTML = friendlyMessage;
+            
             feedback.setAttribute('role', 'status');
             feedback.setAttribute('aria-live', 'polite');
             
             fieldContainer.appendChild(feedback);
 
-            // Animación de entrada
+            // Animación de entrada suave
             requestAnimationFrame(() => {
                 feedback.style.opacity = '1';
                 feedback.style.transform = 'translateY(0)';
             });
         }
+    }
+
+    /**
+     * Crea mensajes de feedback más amigables y útiles
+     * @param {string} fieldName - Nombre del campo
+     * @param {Object} validation - Resultado de validación
+     * @returns {string} Mensaje amigable en HTML
+     */
+    createFriendlyMessage(fieldName, validation) {
+        if (validation.isValid) {
+            const successMessages = {
+                'playerName': '¡Perfecto! Tu nombre se ve genial.',
+                'playerEmail': '¡Excelente! Tu email es válido.',
+                'playerPhone': '¡Genial! Tu teléfono está correcto.',
+                'playerExperience': '¡Listo! Nivel de experiencia seleccionado.'
+            };
+            return successMessages[fieldName] || '¡Muy bien! Campo completado correctamente.';
+        }
+
+        // Mensajes de error más amigables y constructivos
+        const friendlyMessages = {
+            'El nombre es obligatorio': 'Cuéntanos cómo te llamas para personalizar tu experiencia.',
+            'El nombre debe tener al menos 2 caracteres': 'Tu nombre parece muy corto. ¿Podrías escribirlo completo?',
+            'El nombre no puede exceder 30 caracteres': 'Tu nombre es un poco largo. Prueba con una versión más corta.',
+            'Solo se permiten letras y espacios': 'Solo necesitamos letras en tu nombre, sin números ni símbolos especiales.',
+            'No se permiten espacios consecutivos': 'Revisa que no haya espacios dobles en tu nombre.',
+            
+            'El correo electrónico es obligatorio': 'Necesitamos tu email para guardar tu progreso y logros.',
+            'Ingresa un correo electrónico válido': 'Verifica que tu email tenga el formato correcto (ejemplo@correo.com).',
+            'El correo es demasiado largo': 'Tu email parece muy largo. ¿Podrías verificarlo?',
+            'El correo no puede contener espacios': 'Tu email no debe tener espacios. Revísalo por favor.',
+            
+            'El número de teléfono es obligatorio': 'Tu teléfono nos ayuda a enviarte notificaciones importantes.',
+            'Ingresa un número de teléfono válido': 'Verifica que tu teléfono tenga 10 dígitos (celular) o 7-8 dígitos (fijo).',
+            'Solo se permiten números': 'Tu teléfono solo debe contener números, sin espacios ni guiones.',
+            
+            'Selecciona tu nivel de experiencia': 'Escoge tu nivel para ajustar la dificultad del juego.'
+        };
+
+        return friendlyMessages[validation.message] || validation.message;
     }
 
     /**
@@ -355,6 +473,72 @@ class FormValidator {
         if (existingFeedback) {
             existingFeedback.remove();
         }
+        
+        // Remover clases de feedback para permitir reajuste del contenedor
+        fieldContainer.classList.remove('has-feedback');
+        
+        // Reajustar contenedor después de limpiar feedback
+        setTimeout(() => this.ensureContainerAdaptability(), 50);
+    }
+
+    /**
+     * Asegura que el contenedor se adapte dinámicamente al contenido
+     */
+    ensureContainerAdaptability() {
+        const container = document.querySelector('.welcome-container');
+        const form = document.querySelector('.player-form');
+        const screen = document.querySelector('.welcome-screen');
+        
+        if (!container || !form || !screen) return;
+
+        // Aplicar clases de adaptabilidad base
+        container.classList.add('form-expanded', 'container-adaptive');
+        
+        // Verificar si hay feedback activo
+        const feedbackElements = form.querySelectorAll('.field-feedback');
+        const hasValidationFeedback = feedbackElements.length > 0;
+        
+        if (hasValidationFeedback) {
+            container.classList.add('has-validation-feedback');
+        } else {
+            container.classList.remove('has-validation-feedback');
+        }
+        
+        // Determinar si necesita scroll o puede adaptarse naturalmente
+        requestAnimationFrame(() => {
+            // Resetear clases de modo
+            container.classList.remove('force-scroll', 'no-scroll');
+            
+            // Medir contenido real sin restricciones
+            const tempStyle = container.style.cssText;
+            container.style.height = 'auto';
+            container.style.maxHeight = 'none';
+            container.style.overflow = 'visible';
+            
+            const contentHeight = container.scrollHeight;
+            const viewportHeight = window.innerHeight;
+            const maxAllowedHeight = viewportHeight - 40; // margen de seguridad
+            
+            // Restaurar estilo original
+            container.style.cssText = tempStyle;
+            
+            // Decidir modo de visualización
+            if (contentHeight <= maxAllowedHeight) {
+                // Contenido cabe -> modo sin scroll
+                container.classList.add('no-scroll');
+                container.style.height = 'auto';
+                container.style.maxHeight = 'none';
+                container.style.overflowY = 'visible';
+                console.log(`📏 Modo SIN SCROLL: contenido=${contentHeight}px cabe en viewport`);
+            } else {
+                // Contenido no cabe -> modo con scroll
+                container.classList.add('force-scroll');
+                container.style.height = maxAllowedHeight + 'px';
+                container.style.maxHeight = maxAllowedHeight + 'px';
+                container.style.overflowY = 'auto';
+                console.log(`📏 Modo CON SCROLL: contenido=${contentHeight}px > máximo=${maxAllowedHeight}px`);
+            }
+        });
     }
 
     /**
@@ -377,5 +561,73 @@ class FormValidator {
 
 // Exportar para uso global
 window.FormValidator = FormValidator;
+
+// Función utilitaria para inicialización de adaptabilidad
+window.initContainerAdaptability = function() {
+    console.log('🔧 Inicializando adaptabilidad del contenedor...');
+    
+    // Función para configurar el contenedor
+    const setupContainer = () => {
+        const container = document.querySelector('.welcome-container');
+        const screen = document.querySelector('.welcome-screen');
+        
+        if (container && screen) {
+            // Configurar propiedades iniciales
+            container.classList.add('container-adaptive');
+            
+            // Asegurar que el contenedor pueda crecer
+            container.style.minHeight = 'auto';
+            container.style.height = 'auto';
+            container.style.maxHeight = 'calc(100vh - 20px)';
+            
+            // Configurar el screen padre para centrado inteligente
+            screen.style.alignItems = 'center';
+            screen.style.justifyContent = 'center';
+            
+            console.log('✅ Contenedor configurado correctamente');
+            
+            // Configurar observador para cambios dinámicos
+            if (window.MutationObserver) {
+                const observer = new MutationObserver((mutations) => {
+                    let shouldUpdate = false;
+                    
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'childList' || 
+                            (mutation.type === 'attributes' && 
+                             ['class', 'style'].includes(mutation.attributeName))) {
+                            shouldUpdate = true;
+                        }
+                    });
+                    
+                    if (shouldUpdate) {
+                        setTimeout(() => {
+                            const validator = window.formValidator;
+                            if (validator && validator.ensureContainerAdaptability) {
+                                validator.ensureContainerAdaptability();
+                            }
+                        }, 100);
+                    }
+                });
+                
+                const form = document.querySelector('.player-form');
+                if (form) {
+                    observer.observe(form, {
+                        childList: true,
+                        subtree: true,
+                        attributes: true,
+                        attributeFilter: ['class', 'style']
+                    });
+                    console.log('👁️ Observador de mutaciones activado');
+                }
+            }
+        } else {
+            // Si los elementos no están listos, intentar de nuevo
+            setTimeout(setupContainer, 100);
+        }
+    };
+    
+    // Ejecutar configuración
+    setupContainer();
+};
 
 console.log('📋 Sistema de validaciones cargado');

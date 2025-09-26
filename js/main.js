@@ -408,7 +408,7 @@ class HTMLSemanticGame {
     }
 
     /**
-     * Actualiza el progreso del formulario
+     * Actualiza el progreso del formulario con mensajes amigables
      */
     updateFormProgress() {
         if (!this.validator) return;
@@ -419,7 +419,24 @@ class HTMLSemanticGame {
 
         if (progressFill && progressText) {
             progressFill.style.width = `${stats.completionPercentage}%`;
-            progressText.textContent = `${stats.completionPercentage}% completado (${stats.validFields}/${stats.totalFields} campos)`;
+            
+            // Mensajes más amigables según el progreso
+            let friendlyMessage = '';
+            if (stats.completionPercentage === 0) {
+                friendlyMessage = '🚀 ¡Empecemos! Completa tu información para comenzar la aventura';
+            } else if (stats.completionPercentage === 25) {
+                friendlyMessage = '✨ ¡Genial! Ya tienes 1 de 4 campos. Sigamos con los demás';
+            } else if (stats.completionPercentage === 50) {
+                friendlyMessage = '🌟 ¡Excelente! Ya vas por la mitad. Solo faltan 2 campos más';
+            } else if (stats.completionPercentage === 75) {
+                friendlyMessage = '🔥 ¡Casi listo! Solo falta un campo para empezar a jugar';
+            } else if (stats.completionPercentage === 100) {
+                friendlyMessage = '🎉 ¡Perfecto! Todo está listo para comenzar tu aventura';
+            } else {
+                friendlyMessage = `⚡ ${stats.completionPercentage}% completado - ${4 - stats.validFields} campos restantes`;
+            }
+            
+            progressText.textContent = friendlyMessage;
             
             // Efectos visuales según el progreso
             const progressBar = progressFill.parentElement;
@@ -427,6 +444,10 @@ class HTMLSemanticGame {
             
             if (stats.isComplete) {
                 progressBar.classList.add('progress-complete');
+                // Reproducir sonido de éxito
+                if (window.GameAudio) {
+                    window.GameAudio.playSound('level-up', { volume: 0.5 });
+                }
             } else if (stats.validFields > 0) {
                 progressBar.classList.add('progress-partial');
             }
@@ -2203,6 +2224,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Hacer el juego accesible globalmente para debugging
     window.HTMLGame = game;
+    
+    // Inicializar adaptabilidad del contenedor
+    if (window.initContainerAdaptability) {
+        window.initContainerAdaptability();
+    }
     
     console.log('🚀 Aplicación cargada correctamente');
 });
