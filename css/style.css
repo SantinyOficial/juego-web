@@ -259,12 +259,12 @@ body::after {
 body.phase-1 {
     --color-primary: var(--phase-1-primary);
     --color-secondary: var(--phase-1-secondary);
-    --color-primary-alpha-30: rgba(74, 144, 226, 0.3);
-    --color-primary-alpha-20: rgba(74, 144, 226, 0.2);
-    --color-primary-alpha-15: rgba(74, 144, 226, 0.15);
-    --color-secondary-alpha-25: rgba(92, 179, 204, 0.25);
-    --color-secondary-alpha-15: rgba(92, 179, 204, 0.15);
-    --color-secondary-alpha-10: rgba(92, 179, 204, 0.1);
+    --color-primary-alpha-30: rgba(74, 144, 226, 0);
+    --color-primary-alpha-20: rgba(74, 144, 226, 0);
+    --color-primary-alpha-15: rgba(74, 144, 226, 0);
+    --color-secondary-alpha-25: rgba(92, 179, 204, 0);
+    --color-secondary-alpha-15: rgba(92, 179, 204, 0);
+    --color-secondary-alpha-10: rgba(92, 179, 204, 0);
 }
 
 /* FASE 2: HTML - Naranja nebular suave */
@@ -476,23 +476,23 @@ body.big-bang {
     100% { text-shadow: 0 0 25px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.8); }
 }
 
+
 .audio-controls {
-    position: absolute;
-    top: var(--spacing-4);
-    right: var(--spacing-4);
     display: flex;
+    align-items: center;
     gap: var(--spacing-2);
-    z-index: 10;
+    margin-left: auto;
+    align-self: flex-start;
 }
 
 .audio-btn {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
     color: rgba(226, 232, 240, 0.85);
     background: rgba(15, 23, 42, 0.72);
@@ -1673,22 +1673,36 @@ body.big-bang {
 .player-info {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: var(--spacing-4);
+    flex-wrap: wrap;
     padding-bottom: var(--spacing-4);
     border-bottom: 2px solid rgba(203, 213, 225, 0.3);
+    position: relative;
+    padding-right: 58px;
+}
+
+.player-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    min-width: 0;
 }
 
 .player-avatar {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-    border-radius: 50%;
+    width: 72px;
+    height: 72px;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25), transparent 55%),
+                linear-gradient(135deg, rgba(56, 189, 248, 0.95), rgba(67, 56, 202, 0.9));
+    border-radius: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-    animation: avatar-pulse 2s ease-in-out infinite alternate;
+    font-size: 32px;
+    color: rgba(15, 23, 42, 0.92);
+    box-shadow: 0 10px 28px rgba(30, 64, 175, 0.35);
+    border: 2px solid rgba(148, 163, 184, 0.35);
+    animation: avatar-pulse 2.3s ease-in-out infinite alternate;
 }
 
 @keyframes avatar-pulse {
@@ -1899,12 +1913,12 @@ body.big-bang {
 
 /* Control de Audio */
 .audio-controls {
-    position: absolute;
-    top: var(--spacing-4);
-    right: var(--spacing-4);
     display: flex;
+    align-items: center;
     gap: var(--spacing-2);
-    z-index: 10;
+    position: absolute;
+    top: -12px;
+    right: 0;
 }
 
 .audio-btn {

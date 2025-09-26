@@ -92,10 +92,17 @@
         <!-- Panel de Jugador -->
         <aside class="player-panel">
             <div class="player-info">
-                <div class="player-avatar">👤</div>
-                <div class="player-details">
-                    <h3 id="display-name">Jugador</h3>
-                    <span id="display-level" class="player-level">Principiante</span>
+                <div class="player-meta">
+                    <div class="player-avatar" aria-hidden="true">�️</div>
+                    <div class="player-details">
+                        <h3 id="display-name">Jugador</h3>
+                        <span id="display-level" class="player-level">Principiante</span>
+                    </div>
+                </div>
+                <div class="audio-controls" role="group" aria-label="Controles de audio">
+                    <button id="audio-toggle" class="audio-btn" type="button" title="Alternar sonido" aria-label="Alternar sonido">
+                        🔊
+                    </button>
                 </div>
             </div>
             
@@ -145,13 +152,6 @@
             <header class="game-header">
                 <h1 id="game-title">🎯 Aprende HTML Semántico</h1>
                 <p id="game-description">Arrastra las etiquetas HTML a las zonas correctas para construir una página web</p>
-                
-                <!-- Control de Audio -->
-                <div class="audio-controls">
-                    <button id="audio-toggle" class="audio-btn" title="Alternar sonido">
-                        🔊
-                    </button>
-                </div>
             </header>
 
         <!-- JUEGO 1: HTML SEMÁNTICO -->
