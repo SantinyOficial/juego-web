@@ -1100,40 +1100,59 @@ class HTMLSemanticGame {
     /**
      * Actualiza el puntaje del jugador
      */
-    updateScore(isCorrect) {
-        if (!this.isGameStarted) return;
+    updateScore(isCorrect, options = {}) {
+        if (!this.isGameStarted) return 0;
 
         if (isCorrect) {
-            this.player.streak++;
-            const basePoints = 10;
-            const streakBonus = Math.min(this.player.streak * 2, 50);
-            const levelMultiplier = this.player.currentLevel * 0.5;
-            const totalPoints = Math.floor(basePoints + streakBonus + levelMultiplier);
-            
-            this.player.score += totalPoints;
-            this.player.experience += totalPoints;
-            
-            this.showFloatingScore(`+${totalPoints}`, true);
-            
-            // Verificar logros de racha
-            if (this.player.streak === 3) {
-                this.addAchievement('🔥', 'En Racha', 'Conseguiste 3 aciertos seguidos');
-                if (window.GameAudio) {
-                    window.GameAudio.playSound('streak', { volume: 0.6 });
-                }
-            } else if (this.player.streak === 5) {
-                this.addAchievement('⚡', 'Imparable', 'Conseguiste 5 aciertos seguidos');
-                if (window.GameAudio) {
-                    window.GameAudio.playSound('streak', { volume: 0.8, pitch: 1.2 });
-                }
-            }
-        } else {
-            this.player.streak = 0;
-            this.showFloatingScore('Racha perdida', false);
+            const basePoints = typeof options.basePoints === 'number' ? options.basePoints : 10;
+            return this.applyScoreReward(basePoints, options);
         }
 
+        this.player.streak = 0;
+        const failLabel = options.floatingLabel || 'Racha perdida';
+        this.showFloatingScore(failLabel, false);
         this.checkLevelUp();
         this.updateScoreBoard();
+        return 0;
+    }
+
+    /**
+     * Aplica una recompensa de puntos al marcador principal
+     */
+    applyScoreReward(basePoints, options = {}) {
+        this.player.streak++;
+        const streakBonus = Math.min(this.player.streak * 2, 50);
+        const levelMultiplier = this.player.currentLevel * 0.5;
+        const totalPoints = Math.max(1, Math.floor(basePoints + streakBonus + levelMultiplier));
+
+        this.player.score += totalPoints;
+        this.player.experience += totalPoints;
+
+        const floatingLabel = options.floatingLabel || `+${totalPoints}`;
+        this.showFloatingScore(floatingLabel, true);
+
+        this.handleStreakAchievements();
+        this.checkLevelUp();
+        this.updateScoreBoard();
+
+        return totalPoints;
+    }
+
+    /**
+     * Gestiona logros asociados a las rachas de aciertos
+     */
+    handleStreakAchievements() {
+        if (this.player.streak === 3) {
+            this.addAchievement('🔥', 'En Racha', 'Conseguiste 3 aciertos seguidos');
+            if (window.GameAudio) {
+                window.GameAudio.playSound('streak', { volume: 0.6 });
+            }
+        } else if (this.player.streak === 5) {
+            this.addAchievement('⚡', 'Imparable', 'Conseguiste 5 aciertos seguidos');
+            if (window.GameAudio) {
+                window.GameAudio.playSound('streak', { volume: 0.8, pitch: 1.2 });
+            }
+        }
     }
 
     /**
@@ -1605,22 +1624,16 @@ class HTMLSemanticGame {
         this.cssGameState = {
             currentChallenge: 1,
             totalChallenges: 4,
-            score: 0,
-            multiplier: 1,
             timeRemaining: 180, // 3 minutos
             challengeStartTime: Date.now(),
             appliedStyles: {},
-            achievements: {
-                speed: false,
-                precision: false,
-                creativity: false
-            },
-            completedChallenges: new Set()
+            completedChallenges: new Set(),
+            rewardsEarned: 0
         };
         
         // Configurar herramientas CSS
         this.setupCSSTools();
-    this.cacheCSSToolCategories();
+        this.cacheCSSToolCategories();
         
         // Configurar controles de vista previa
         this.setupPreviewControls();
@@ -1794,17 +1807,21 @@ class HTMLSemanticGame {
             successIndicator.classList.add('animate-success');
         }
         
-        // Calcular puntuación
+        // Calcular recompensa dinámica y aplicarla al marcador principal
         const timeBonus = this.calculateTimeBonus();
-        const baseScore = 1000;
-        const finalScore = Math.round((baseScore + timeBonus) * this.cssGameState.multiplier);
-        
-        this.cssGameState.score += finalScore;
-        this.updateCSSScore();
-    this.updateCSSProgress();
-        
-        // Verificar logros
-        this.checkCSSAchievements();
+        const rewardPoints = this.calculateCSSReward(timeBonus);
+
+        const awardedPoints = this.updateScore(true, {
+            basePoints: rewardPoints
+        });
+
+        this.cssGameState.rewardsEarned += awardedPoints;
+        this.gameStats.totalAttempts++;
+        this.gameStats.correctPlacements++;
+        this.updateStats();
+        this.updateCSSProgress();
+
+    this.showCSSMessage(`🎯 Desafío ${currentChallenge} completado. Ganaste ${awardedPoints.toLocaleString()} puntos.`, 'success');
         
         // Efectos de audio
         if (window.GameAudio) {
@@ -2005,21 +2022,14 @@ class HTMLSemanticGame {
         }
         return 0;
     }
-    
+
     /**
-     * Actualiza la puntuación CSS
+     * Determina los puntos base que se otorgarán al completar un desafío CSS
      */
-    updateCSSScore() {
-        const scoreEl = document.getElementById('css-score');
-        const multiplierEl = document.getElementById('css-multiplier');
-        
-        if (scoreEl) {
-            scoreEl.textContent = this.cssGameState.score.toLocaleString();
-        }
-        
-        if (multiplierEl) {
-            multiplierEl.textContent = `x${this.cssGameState.multiplier}`;
-        }
+    calculateCSSReward(timeBonus) {
+        const baseReward = 60;
+        const scaledBonus = Math.round(timeBonus / 20);
+        return baseReward + scaledBonus;
     }
     
     /**
@@ -2150,63 +2160,13 @@ class HTMLSemanticGame {
     }
     
     /**
-     * Verifica logros CSS
-     */
-    checkCSSAchievements() {
-        const challengeTime = (Date.now() - this.cssGameState.challengeStartTime) / 1000;
-        const currentChallenge = this.cssGameState.currentChallenge;
-        const styles = this.cssGameState.appliedStyles[currentChallenge] || {};
-        
-        // Logro de velocidad
-        if (challengeTime <= 30 && !this.cssGameState.achievements.speed) {
-            this.unlockCSSAchievement('speed', '⚡ ¡Velocidad Lightning!');
-            this.cssGameState.multiplier += 0.5;
-        }
-        
-        // Logro de precisión
-        if (Object.keys(styles).length <= 2 && !this.cssGameState.achievements.precision) {
-            this.unlockCSSAchievement('precision', '🎯 ¡Precisión Perfecta!');
-            this.cssGameState.multiplier += 0.3;
-        }
-        
-        // Logro de creatividad
-        if (Object.keys(styles).length >= 4 && !this.cssGameState.achievements.creativity) {
-            this.unlockCSSAchievement('creativity', '🎨 ¡Creatividad Artística!');
-            this.cssGameState.multiplier += 0.4;
-        }
-    }
-    
-    /**
-     * Desbloquea un logro CSS
-     */
-    unlockCSSAchievement(achievement, message) {
-        this.cssGameState.achievements[achievement] = true;
-        
-        const achievementEl = document.getElementById(`${achievement}-achievement`);
-        if (achievementEl) {
-            achievementEl.classList.add('unlocked');
-        }
-        
-        this.showCSSMessage(message, 'success');
-        
-        if (window.GameAudio) {
-            window.GameAudio.playSound('achievement-unlock');
-        }
-    }
-    
-    /**
      * Completa todo el juego CSS
      */
     completeCSSGame() {
         clearInterval(this.cssTimer);
         
-        // Calcular bonus final
-        const timeBonus = this.cssGameState.timeRemaining > 0 ? this.cssGameState.timeRemaining * 10 : 0;
-        const achievementBonus = Object.values(this.cssGameState.achievements).filter(Boolean).length * 500;
-        const finalScore = this.cssGameState.score + timeBonus + achievementBonus;
-        
         // Mostrar resumen final
-        this.showCSSGameSummary(finalScore);
+        this.showCSSGameSummary();
         
         // Completar nivel después de mostrar resumen
         setTimeout(() => {
@@ -2217,14 +2177,16 @@ class HTMLSemanticGame {
     /**
      * Muestra resumen del juego CSS
      */
-    showCSSGameSummary(finalScore) {
+    showCSSGameSummary() {
+        const completed = this.cssGameState.completedChallenges ? this.cssGameState.completedChallenges.size : 0;
+        const rewards = this.cssGameState.rewardsEarned || 0;
+        const remainingTime = Math.max(0, this.cssGameState.timeRemaining);
         const summary = `
             🎨 ¡CSS Designer Completado!
             
-            📊 Puntuación Final: ${finalScore.toLocaleString()}
-            ⏱️ Tiempo Restante: ${this.cssGameState.timeRemaining}s
-            🏆 Logros Desbloqueados: ${Object.values(this.cssGameState.achievements).filter(Boolean).length}/3
-            ⚡ Multiplicador Final: x${this.cssGameState.multiplier}
+            ✅ Desafíos completados: ${completed} / ${this.cssGameState.totalChallenges}
+            📊 Puntos ganados en CSS: ${rewards.toLocaleString()}
+            ⏱️ Tiempo restante: ${remainingTime}s
             
             ¡Excelente trabajo como diseñador CSS!
         `;

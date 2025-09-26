@@ -93,7 +93,14 @@
         <aside class="player-panel">
             <div class="player-info">
                 <div class="player-meta">
-                    <div class="player-avatar" aria-hidden="true">�️</div>
+                    <div class="player-avatar" aria-hidden="true">
+                        <svg class="player-avatar-icon" viewBox="0 0 64 64" role="presentation">
+                            <path d="M46 22h-4.4a3.6 3.6 0 0 0-3.2-2h-12.8a3.6 3.6 0 0 0-3.2 2H18a4 4 0 0 0-4 4v4a7 7 0 0 0 7 7h3.1l3.5-4.6h8.8l3.5 4.6H42a7 7 0 0 0 7-7v-4a4 4 0 0 0-4-4Z"/>
+                            <path d="M32 34c8.8 0 16-7.16 16-16S40.8 2 32 2 16 9.16 16 18s7.2 16 16 16Zm0-26a10 10 0 1 1-10 10 10 10 0 0 1 10-10Z"/>
+                            <path d="M32 38c-12.15 0-24 6.33-24 18v6h48v-6c0-11.67-11.85-18-24-18Zm16 20H16v-2c0-7.18 8-12 16-12s16 4.82 16 12Z"/>
+                            <path d="M17 26h4v6h-4zm26 0h4v6h-4z"/>
+                        </svg>
+                    </div>
                     <div class="player-details">
                         <h3 id="display-name">Jugador</h3>
                         <span id="display-level" class="player-level">Principiante</span>
@@ -331,21 +338,6 @@
                     </div>
                 </div>
 
-                <div class="css-scoring-panel">
-                    <div class="score-info">
-                        <span class="score-label">🏆 Métrica estelar:</span>
-                        <span class="score-value" id="css-score">0</span>
-                    </div>
-                    <div class="bonus-multiplier">
-                        <span class="multiplier-label">⚡ Flujo creativo:</span>
-                        <span class="multiplier-value" id="css-multiplier">x1</span>
-                    </div>
-                    <div class="achievements">
-                        <div class="achievement" id="speed-achievement">⚡ Velocidad</div>
-                        <div class="achievement" id="precision-achievement">🎯 Precisión</div>
-                        <div class="achievement" id="creativity-achievement">🎨 Creatividad</div>
-                    </div>
-                </div>
             </section>
 
             <!-- JUEGO 3: JAVASCRIPT LOGIC -->
