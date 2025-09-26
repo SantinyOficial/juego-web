@@ -1374,6 +1374,117 @@ class HTMLSemanticGame {
     }
 
     /**
+     * Muestra una notificación celebrando la misión completada
+     */
+    showMissionCelebration(gameKey, config) {
+        const missionMeta = {
+            html: {
+                icon: '🛠️',
+                title: '¡Misión HTML completada!',
+                reward: '+250 XP',
+                detail: 'Estructuraste la galaxia base con etiquetas perfectas.'
+            },
+            css: {
+                icon: '🎨',
+                title: '¡Misión CSS completada!',
+                reward: '+350 XP',
+                detail: 'Liberaste una ola de estilo que dejó la interfaz impecable.'
+            },
+            js: {
+                icon: '⚡',
+                title: '¡Misión JS completada!',
+                reward: '+500 XP',
+                detail: 'Reactivaste todos los sistemas con lógica perfecta.'
+            }
+        };
+
+        const meta = missionMeta[gameKey];
+        if (!meta) {
+            return;
+        }
+
+        // Eliminar celebraciones anteriores para evitar solapamientos
+        const existing = document.querySelector('.mission-celebration');
+        if (existing) {
+            existing.remove();
+        }
+
+        const celebration = document.createElement('div');
+        celebration.className = `mission-celebration mission-${gameKey}`;
+        celebration.innerHTML = `
+            <div class="celebration-icon">${meta.icon}</div>
+            <div class="celebration-info">
+                <h4>${meta.title}</h4>
+                <p>${config?.completionMessage || meta.detail}</p>
+                <span class="celebration-reward">${meta.reward}</span>
+            </div>
+        `;
+
+        celebration.setAttribute('role', 'status');
+        celebration.setAttribute('aria-live', 'polite');
+
+        document.body.appendChild(celebration);
+
+        requestAnimationFrame(() => {
+            celebration.classList.add('show');
+        });
+
+        if (window.GameAudio) {
+            window.GameAudio.playSound('success', { volume: 0.7, pitch: 1.05 });
+        }
+
+        setTimeout(() => {
+            celebration.classList.add('hide');
+            celebration.addEventListener('transitionend', () => {
+                if (celebration.parentNode) {
+                    celebration.parentNode.removeChild(celebration);
+                }
+            }, { once: true });
+        }, 4200);
+    }
+
+    /**
+     * Dispara un barrido de color para celebrar el nivel completado
+     */
+    triggerLevelSweep(levelKey) {
+        if (!['html', 'css'].includes(levelKey)) {
+            return;
+        }
+
+        const sweep = document.createElement('div');
+        sweep.className = `level-sweep level-sweep-${levelKey}`;
+        sweep.setAttribute('aria-hidden', 'true');
+
+        document.body.appendChild(sweep);
+
+        let fallbackRemoval;
+
+        const cleanup = () => {
+            sweep.removeEventListener('animationend', onAnimationEnd);
+            if (fallbackRemoval) {
+                clearTimeout(fallbackRemoval);
+            }
+            if (sweep.parentNode) {
+                sweep.parentNode.removeChild(sweep);
+            }
+        };
+
+        const onAnimationEnd = () => {
+            clearTimeout(fallbackRemoval);
+            cleanup();
+        };
+
+        sweep.addEventListener('animationend', onAnimationEnd);
+
+    fallbackRemoval = setTimeout(cleanup, 2200);
+
+        if (window.GameAudio) {
+            const sounds = levelKey === 'css' ? ['success', 'levelUp'] : ['levelUp'];
+            window.GameAudio.playSequence?.(sounds, 250);
+        }
+    }
+
+    /**
      * Verifica la progresión entre fases basada en elementos completados
      */
     checkPhaseProgression(tagType) {
@@ -1405,13 +1516,21 @@ class HTMLSemanticGame {
             const modal = document.getElementById('big-bang-modal');
             if (modal) {
                 modal.classList.remove('hidden');
+                modal.classList.remove('closing');
+                modal.classList.remove('is-active');
+
+                // Reiniciar animación forzando reflujo antes de activar
+                void modal.offsetWidth;
+                requestAnimationFrame(() => {
+                    modal.classList.add('is-active');
+                });
                 
                 // Configurar evento del botón de reinicio
                 const restartBtn = document.getElementById('restart-complete-game');
                 if (restartBtn) {
-                    restartBtn.addEventListener('click', () => {
+                    restartBtn.onclick = () => {
                         this.restartCompleteGame();
-                    });
+                    };
                 }
             }
         }, 3000);
@@ -1428,36 +1547,22 @@ class HTMLSemanticGame {
      * Reinicia completamente el juego desde el formulario
      */
     restartCompleteGame() {
-        // Ocultar modal
         const modal = document.getElementById('big-bang-modal');
         if (modal) {
-            modal.classList.add('hidden');
+            modal.classList.add('closing');
+            modal.classList.remove('is-active');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 450);
         }
-        
-        // Resetear todas las fases
-        document.body.classList.remove('phase-2', 'phase-3', 'phase-4', 'big-bang');
-        document.body.classList.add('phase-1');
-        
-        // Mostrar pantalla de bienvenida
-        const welcomeScreen = document.getElementById('welcome-screen');
-        const gameContainer = document.getElementById('game-container');
-        
-        if (welcomeScreen && gameContainer) {
-            gameContainer.classList.add('hidden');
-            welcomeScreen.classList.remove('hidden');
+
+        if (window.GameAudio) {
+            window.GameAudio.playSound('reset', { volume: 0.6 });
         }
-        
-        // Resetear datos del juego
-        this.gamePhase = 'phase-1';
-        this.completedPhases = [];
-        this.gameStats = { correctPlacements: 0, totalAttempts: 0 };
-        this.player = {
-            name: '', email: '', phone: '', level: '',
-            score: 0, streak: 0, currentLevel: 1,
-            experience: 0, maxExperience: 100, achievements: []
-        };
-        
-        console.log('🔄 Juego reiniciado completamente');
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 600);
     }
 
     /**
@@ -2465,6 +2570,10 @@ class HTMLSemanticGame {
         this.isTransitioningGame = true;
 
         const config = this.gameConfigs[this.currentGame];
+        this.showMissionCelebration(this.currentGame, config);
+        if (this.currentGame === 'html' || this.currentGame === 'css') {
+            this.triggerLevelSweep(this.currentGame);
+        }
         this.showNotification(config.completionMessage, 'success');
         
         if (this.currentGame === 'html') {
