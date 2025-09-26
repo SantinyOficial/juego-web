@@ -66,8 +66,10 @@ class FormValidator {
             {
                 name: 'emailFormat',
                 test: (value) => {
-                    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-                    return emailRegex.test(value || '');
+                    if (!value || value.trim().length === 0) return false;
+                    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                    const trimmedValue = value.trim().toLowerCase();
+                    return emailRegex.test(trimmedValue) && !trimmedValue.includes('..');
                 },
                 message: 'Ingresa un correo electrónico válido'
             },
@@ -80,6 +82,41 @@ class FormValidator {
                 name: 'noSpaces',
                 test: (value) => !/\s/.test(value || ''),
                 message: 'El correo no puede contener espacios'
+            }
+        ]);
+
+        // Validaciones para teléfono
+        this.rules.set('playerPhone', [
+            {
+                name: 'required',
+                test: (value) => value && value.trim().length > 0,
+                message: 'El número de teléfono es obligatorio'
+            },
+            {
+                name: 'phoneFormat',
+                test: (value) => {
+                    if (!value) return false;
+                    // Formato colombiano: celular (300-350) o fijo (área + 7 dígitos)
+                    const cleanPhone = value.replace(/\D/g, '');
+                    return /^(3[0-5][0-9]{8}|[1-8][0-9]{6,7})$/.test(cleanPhone);
+                },
+                message: 'Ingresa un número válido (celular 10 dígitos o fijo 7-8 dígitos)'
+            },
+            {
+                name: 'minLength',
+                test: (value) => {
+                    const cleanPhone = (value || '').replace(/\D/g, '');
+                    return cleanPhone.length >= 7;
+                },
+                message: 'El teléfono debe tener mínimo 7 dígitos'
+            },
+            {
+                name: 'maxLength',
+                test: (value) => {
+                    const cleanPhone = (value || '').replace(/\D/g, '');
+                    return cleanPhone.length <= 10;
+                },
+                message: 'El teléfono no puede exceder 10 dígitos'
             }
         ]);
 
@@ -112,6 +149,12 @@ class FormValidator {
             empty: '📧 Necesitamos tu email',
             invalid: '❌ Email inválido',
             valid: '✅ Email correcto'
+        });
+
+        this.errorMessages.set('playerPhone', {
+            empty: '📱 Ingresa tu teléfono',
+            invalid: '❌ Teléfono inválido',
+            valid: '✅ Teléfono correcto'
         });
 
         this.errorMessages.set('playerLevel', {
@@ -239,6 +282,11 @@ class FormValidator {
                     .toLowerCase()
                     .substring(0, 320); // Límite RFC5322
             
+            case 'phone':
+                return value.trim()
+                    .replace(/\D/g, '') // Solo números
+                    .substring(0, 10); // Máximo 10 dígitos
+            
             case 'select':
                 return value.trim();
             
@@ -268,8 +316,16 @@ class FormValidator {
             fieldContainer.classList.add('field-empty');
         } else if (validation.isValid) {
             fieldContainer.classList.add('field-valid');
+            // Sonido de validación exitosa
+            if (window.GameAudio) {
+                window.GameAudio.playSound('validation-success', { volume: 0.6 });
+            }
         } else {
             fieldContainer.classList.add('field-invalid');
+            // Sonido de error de validación
+            if (window.GameAudio) {
+                window.GameAudio.playSound('validation-error', { volume: 0.4 });
+            }
         }
 
         // Crear elemento de feedback

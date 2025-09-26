@@ -61,8 +61,10 @@ juego-html-semantico/
 ### Sistema de Registro
 - **Nombre del Jugador**: Validación de caracteres y longitud
 - **Email**: Verificación de formato RFC5322 compliant
+- **Teléfono**: Validación para números colombianos (celular/fijo)
 - **Nivel de Experiencia**: Selección entre Principiante, Intermedio y Avanzado
 - **Progreso Visual**: Barra de completitud en tiempo real
+- **Feedback Sonoro**: Sonidos de validación en tiempo real
 
 ### Elementos HTML Semánticos
 - **`<header>`**: Encabezado principal de la página web
@@ -86,11 +88,13 @@ juego-html-semantico/
 - **Debounce Pattern**: Optimización de rendimiento en validaciones
 - **Mensajes Contextuales**: Feedback específico para cada tipo de error
 
-### 🎨 Efectos Visuales Gamificados
+### 🎨 Efectos Visuales y Sonoros Gamificados
 - **Fondo Dinámico**: Gradientes animados con partículas energéticas
 - **Transiciones Fluidas**: Animaciones CSS3 con easing personalizado
 - **Feedback Visual**: Estados de éxito, error y progreso claramente diferenciados
 - **Efectos de Partículas**: Sistema de partículas CSS para ambiente gaming
+- **Sistema de Audio Gaming**: Sonidos inmersivos para cada acción del juego
+- **Efectos Sonoros Dinámicos**: Audio sintético generado con Web Audio API
 
 ### 🎯 Sistema de Logros
 - **Logros por Racha**: Reconocimientos por aciertos consecutivos
@@ -98,11 +102,24 @@ juego-html-semantico/
 - **Historial**: Seguimiento de últimos 5 logros obtenidos
 - **Notificaciones**: Popups animados para logros desbloqueados
 
+### 🔊 Sistema de Audio Gaming
+- **Audio Sintético**: Generación de sonidos usando Web Audio API
+- **Sonidos Contextuales**: Diferentes efectos para cada tipo de acción
+- **Control de Volumen**: Sistema de mute/unmute integrado
+- **Fallback Inteligente**: Compatibilidad con navegadores legacy
+- **Sonidos Inmersivos**: 
+  - 🔸 **Interfaz**: Click, hover, focus en elementos
+  - 🔸 **Validación**: Éxito y error en tiempo real
+  - 🔸 **Drag & Drop**: Arrastre, hover sobre zonas, colocación
+  - 🔸 **Logros**: Rachas, subida de nivel, completado
+  - 🔸 **Notificaciones**: Alertas e información general
+
 ### ♿ Accesibilidad y UX
 - **Navegación por Teclado**: Soporte completo con Tab/Shift+Tab
 - **ARIA Labels**: Etiquetas semánticas para lectores de pantalla
 - **Focus Management**: Gestión inteligente del foco visual
 - **Responsive Design**: Adaptación perfecta a todos los dispositivos
+- **Audio Opcional**: Control total sobre efectos sonoros
 
 ## 🚀 Instalación y Uso
 

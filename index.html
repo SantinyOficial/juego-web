@@ -7,7 +7,7 @@
     <title>Aprende HTML Semántico - Juego Drag & Drop</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="phase-1">
     <!-- Pantalla de Bienvenida -->
     <section id="welcome-screen" class="welcome-screen">
         <div class="welcome-container">
@@ -36,6 +36,12 @@
                     <label for="playerEmail">📧 Correo Electrónico</label>
                     <input type="email" id="playerEmail" name="playerEmail" required 
                            placeholder="tu@email.com" autocomplete="email" maxlength="320">
+                </div>
+                
+                <div class="form-group">
+                    <label for="playerPhone">📱 Número de Teléfono</label>
+                    <input type="tel" id="playerPhone" name="playerPhone" required 
+                           placeholder="3001234567" autocomplete="tel" maxlength="15">
                 </div>
                 
                 <div class="form-group">
@@ -96,10 +102,21 @@
             <header class="game-header">
                 <h1>🎯 Aprende HTML Semántico</h1>
                 <p>Arrastra las etiquetas HTML a las zonas correctas para construir una página web</p>
+                
+                <!-- Control de Audio -->
+                <div class="audio-controls">
+                    <button id="audio-toggle" class="audio-btn" title="Alternar sonido">
+                        🔊
+                    </button>
+                </div>
             </header>
 
-        <section class="game-board">
-            <h2>Plantilla de Página Web</h2>
+        <!-- JUEGO 1: HTML SEMÁNTICO -->
+        <section id="html-game" class="game-level active">
+            <div class="level-header">
+                <h2>🏗️ Nivel 1: Estructura HTML</h2>
+                <p>Arrastra las etiquetas HTML a las zonas correctas</p>
+            </div>
             <div class="webpage-template">
                 <div id="drop-header" class="drop-zone" data-target="header">
                     <span class="zone-label">Header Zone</span>
@@ -135,10 +152,223 @@
             </div>
         </section>
 
+        <!-- JUEGO 2: CSS STYLING -->
+        <section id="css-game" class="game-level hidden">
+            <div class="level-header">
+                <h2>🎨 Nivel 2: CSS Designer</h2>
+                <p>¡Conviértete en un diseñador CSS! Aplica estilos en tiempo real para completar los desafíos</p>
+                <div class="css-timer">⏱️ <span id="css-timer-display">03:00</span></div>
+            </div>
+            
+            <div class="css-designer-workspace">
+                <!-- Panel de control CSS -->
+                <div class="css-control-panel">
+                    <div class="challenge-info">
+                        <h3 id="css-challenge-title">🎯 Desafío 1: Centrar el elemento</h3>
+                        <p id="css-challenge-description">Haz que el elemento azul se centre horizontalmente en su contenedor</p>
+                        <div class="challenge-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="css-progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span id="css-challenge-counter">1 / 4</span>
+                        </div>
+                    </div>
+                    
+                    <div class="css-toolkit">
+                        <h4>🛠️ Herramientas CSS</h4>
+                        <div class="css-tools">
+                            <div class="tool-category">
+                                <label>Posicionamiento:</label>
+                                <div class="tool-buttons">
+                                    <button class="css-tool" data-property="margin" data-value="0 auto">margin: 0 auto</button>
+                                    <button class="css-tool" data-property="text-align" data-value="center">text-align: center</button>
+                                    <button class="css-tool" data-property="display" data-value="flex">display: flex</button>
+                                    <button class="css-tool" data-property="justify-content" data-value="center">justify-content: center</button>
+                                </div>
+                            </div>
+                            
+                            <div class="tool-category">
+                                <label>Colores y Fondos:</label>
+                                <div class="tool-buttons">
+                                    <button class="css-tool" data-property="background" data-value="linear-gradient(45deg, #ff6b6b, #4ecdc4)">Degradado</button>
+                                    <button class="css-tool" data-property="background-color" data-value="#ff6b6b">Color Sólido</button>
+                                    <button class="css-tool" data-property="background-image" data-value="radial-gradient(circle, #667eea 0%, #764ba2 100%)">Degradado Radial</button>
+                                </div>
+                            </div>
+                            
+                            <div class="tool-category">
+                                <label>Efectos:</label>
+                                <div class="tool-buttons">
+                                    <button class="css-tool" data-property="box-shadow" data-value="0 4px 8px rgba(0,0,0,0.3)">Sombra</button>
+                                    <button class="css-tool" data-property="border-radius" data-value="10px">Bordes Redondeados</button>
+                                    <button class="css-tool" data-property="transform" data-value="rotate(15deg)">Rotar</button>
+                                    <button class="css-tool" data-property="transform" data-value="scale(1.2)">Escalar</button>
+                                </div>
+                            </div>
+                            
+                            <div class="tool-category">
+                                <label>Layout:</label>
+                                <div class="tool-buttons">
+                                    <button class="css-tool" data-property="display" data-value="grid">display: grid</button>
+                                    <button class="css-tool" data-property="grid-template-columns" data-value="repeat(3, 1fr)">3 Columnas</button>
+                                    <button class="css-tool" data-property="gap" data-value="20px">Espaciado</button>
+                                    <button class="css-tool" data-property="align-items" data-value="center">Alinear Items</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="css-actions">
+                            <button class="reset-element-btn" id="reset-css-element">🔄 Resetear Elemento</button>
+                            <button class="hint-btn" id="css-hint-btn">💡 Pista</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Área de vista previa -->
+                <div class="css-preview-area">
+                    <div class="preview-header">
+                        <h4>�️ Vista Previa en Tiempo Real</h4>
+                        <div class="preview-controls">
+                            <button class="preview-size" data-size="desktop">🖥️ Desktop</button>
+                            <button class="preview-size" data-size="tablet">📱 Tablet</button>
+                            <button class="preview-size" data-size="mobile">📱 Mobile</button>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-container" id="css-preview-container">
+                        <!-- Desafío 1: Centrar elemento -->
+                        <div class="css-challenge-preview active" id="challenge-1-preview">
+                            <div class="target-container">
+                                <div class="target-element" id="target-element-1">
+                                    Elemento a centrar
+                                </div>
+                            </div>
+                            <div class="success-indicator" id="success-1">✅ ¡Perfecto!</div>
+                        </div>
+                        
+                        <!-- Desafío 2: Crear degradado -->
+                        <div class="css-challenge-preview" id="challenge-2-preview">
+                            <div class="target-container">
+                                <div class="target-element" id="target-element-2">
+                                    Aplicar degradado aquí
+                                </div>
+                            </div>
+                            <div class="success-indicator" id="success-2">✅ ¡Increíble degradado!</div>
+                        </div>
+                        
+                        <!-- Desafío 3: Layout responsive -->
+                        <div class="css-challenge-preview" id="challenge-3-preview">
+                            <div class="target-container" id="target-element-3">
+                                <div class="grid-item">Item 1</div>
+                                <div class="grid-item">Item 2</div>
+                                <div class="grid-item">Item 3</div>
+                                <div class="grid-item">Item 4</div>
+                                <div class="grid-item">Item 5</div>
+                                <div class="grid-item">Item 6</div>
+                            </div>
+                            <div class="success-indicator" id="success-3">✅ ¡Layout responsive perfecto!</div>
+                        </div>
+                        
+                        <!-- Desafío 4: Efectos avanzados -->
+                        <div class="css-challenge-preview" id="challenge-4-preview">
+                            <div class="target-container">
+                                <div class="target-element" id="target-element-4">
+                                    ¡Hazme brillar!
+                                </div>
+                            </div>
+                            <div class="success-indicator" id="success-4">✅ ¡Efectos espectaculares!</div>
+                        </div>
+                    </div>
+                    
+                    <div class="applied-styles-panel">
+                        <h5>📝 Estilos Aplicados:</h5>
+                        <div class="current-css" id="current-css-display">
+                            /* Los estilos aparecerán aquí */
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel de puntuación y logros -->
+            <div class="css-scoring-panel">
+                <div class="score-info">
+                    <span class="score-label">🏆 Puntuación:</span>
+                    <span class="score-value" id="css-score">0</span>
+                </div>
+                <div class="bonus-multiplier">
+                    <span class="multiplier-label">⚡ Multiplicador:</span>
+                    <span class="multiplier-value" id="css-multiplier">x1</span>
+                </div>
+                <div class="achievements">
+                    <div class="achievement" id="speed-achievement">⚡ Velocidad</div>
+                    <div class="achievement" id="precision-achievement">🎯 Precisión</div>
+                    <div class="achievement" id="creativity-achievement">🎨 Creatividad</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- JUEGO 3: JAVASCRIPT LOGIC -->
+        <section id="js-game" class="game-level hidden">
+            <div class="level-header">
+                <h2>⚡ Nivel 3: Lógica JavaScript</h2>
+                <p>Completa el código JavaScript escribiendo las funciones correctas</p>
+            </div>
+            <div class="js-playground">
+                <div class="code-challenges">
+                    <div class="challenge-card" data-challenge="1">
+                        <h3>🖱️ Evento Click</h3>
+                        <div class="code-block">
+                            <pre><code>button.addEventListener('<span class="code-input-container"><input type="text" class="code-input" data-answer="click" placeholder="tipo de evento"></span>', function() {
+    alert('¡Botón presionado!');
+});</code></pre>
+                        </div>
+                        <div class="challenge-status">❓ Completa el código</div>
+                    </div>
+
+                    <div class="challenge-card" data-challenge="2">
+                        <h3>📝 Validación de Formulario</h3>
+                        <div class="code-block">
+                            <pre><code>function validarFormulario() {
+    const nombre = document.<span class="code-input-container"><input type="text" class="code-input" data-answer="getElementById" placeholder="método"></span>('nombre').value;
+    
+    if (nombre === '') {
+        return <span class="code-input-container"><input type="text" class="code-input" data-answer="false" placeholder="boolean"></span>;
+    }
+    return true;
+}</code></pre>
+                        </div>
+                        <div class="challenge-status">❓ Completa el código</div>
+                    </div>
+
+                    <div class="challenge-card" data-challenge="3">
+                        <h3>🔄 Cambio Dinámico</h3>
+                        <div class="code-block">
+                            <pre><code>const elemento = document.querySelector('.mi-clase');
+elemento.<span class="code-input-container"><input type="text" class="code-input" data-answer="style" placeholder="propiedad"></span>.color = 'blue';
+elemento.<span class="code-input-container"><input type="text" class="code-input" data-answer="textContent" placeholder="propiedad"></span> = 'Texto cambiado';</code></pre>
+                        </div>
+                        <div class="challenge-status">❓ Completa el código</div>
+                    </div>
+
+                    <div class="challenge-card" data-challenge="4">
+                        <h3>🔍 Manejo de Arrays</h3>
+                        <div class="code-block">
+                            <pre><code>const numeros = [1, 2, 3, 4, 5];
+const pares = numeros.<span class="code-input-container"><input type="text" class="code-input" data-answer="filter" placeholder="método"></span>(num => num % 2 === 0);
+console.log(pares); // [2, 4]</code></pre>
+                        </div>
+                        <div class="challenge-status">❓ Completa el código</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <aside class="pieces-inventory">
-            <h2>🧩 Piezas HTML</h2>
-            <p>Arrastra las etiquetas a su posición correcta</p>
-            <div class="pieces-container">
+            <h2 id="inventory-title">🧩 Piezas HTML</h2>
+            <p id="inventory-description">Arrastra las etiquetas a su posición correcta</p>
+            
+            <!-- PIEZAS HTML (Nivel 1) -->
+            <div id="html-pieces" class="pieces-container active">
                 <div class="piece" draggable="true" data-tag="header">
                     &lt;header&gt;
                 </div>
@@ -157,6 +387,44 @@
                 <div class="piece" draggable="true" data-tag="footer">
                     &lt;footer&gt;
                 </div>
+            </div>
+
+            <!-- NIVEL CSS: Sin piezas - Es interactivo -->
+            <div id="css-pieces" class="pieces-container hidden">
+                <div class="css-info">
+                    <h3>🎨 Nivel CSS Interactivo</h3>
+                    <p>Responde las preguntas seleccionando la opción correcta</p>
+                    <div class="css-progress">
+                        <span id="css-progress-text">0 / 4 preguntas completadas</span>
+                        <div class="mini-progress-bar">
+                            <div id="css-progress-fill" class="mini-progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NIVEL JAVASCRIPT: Sin piezas - Es de completar código -->
+            <div id="js-pieces" class="pieces-container hidden">
+                <div class="js-info">
+                    <h3>⚡ Nivel JavaScript Interactivo</h3>
+                    <p>Completa el código escribiendo las respuestas correctas</p>
+                    <div class="js-progress">
+                        <span id="js-progress-text">0 / 4 ejercicios completados</span>
+                        <div class="mini-progress-bar">
+                            <div id="js-progress-fill" class="mini-progress-fill"></div>
+                        </div>
+                    </div>
+                    <div class="js-hints">
+                        <h4>💡 Pistas:</h4>
+                        <ul>
+                            <li>Los eventos son: 'click', 'submit', 'change'</li>
+                            <li>getElementById obtiene elementos por ID</li>
+                            <li>style accede a propiedades CSS</li>
+                            <li>filter() filtra arrays según condición</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
             </div>
             
             <div class="game-stats">
@@ -183,6 +451,37 @@
         </div>
     </main>
 
+    <!-- Modal Big Bang Final -->
+    <div id="big-bang-modal" class="big-bang-modal hidden">
+        <div class="big-bang-content">
+            <div class="trophy-icon">🏆</div>
+            <h1 class="big-bang-title">¡META ALCANZADA!</h1>
+            <p class="completion-message">
+                Has dominado HTML, CSS y JavaScript.<br>
+                ¡Eres un desarrollador web completo!
+            </p>
+            
+            <div class="developer-credit">
+                <div class="developer-name">Desarrollado por Santiago Ramírez</div>
+                <div class="social-links">
+                    <a href="https://facebook.com/santiago.ramirez" target="_blank" class="social-link">
+                        <span class="social-icon">📘</span>
+                        <span>Santiago Ramirez</span>
+                    </a>
+                    <a href="https://instagram.com/santiny_oficial" target="_blank" class="social-link">
+                        <span class="social-icon">📷</span>
+                        <span>@santiny_oficial</span>
+                    </a>
+                </div>
+            </div>
+            
+            <button id="restart-complete-game" class="start-game-btn" style="margin-top: 2rem;">
+                🚀 <span>Jugar de Nuevo</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="js/audio.js"></script>
     <script src="js/validaciones.js"></script>
     <script src="js/main.js"></script>
 </body>

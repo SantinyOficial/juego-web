@@ -14,6 +14,7 @@ class HTMLSemanticGame {
         this.player = {
             name: '',
             email: '',
+            phone: '',
             level: '',
             score: 0,
             streak: 0,
@@ -22,6 +23,41 @@ class HTMLSemanticGame {
             maxExperience: 100,
             achievements: []
         };
+        
+        // Sistema de juegos progresivos
+        this.currentGame = 'html'; // html, css, js
+        this.gamePhase = 'phase-1'; // Empezamos en formulario
+        this.gamePhases = {
+            'phase-1': { name: 'FORMULARIO', colors: 'Azul Galáctico Suave + Verde Agua Espacial', elements: [] },
+            'phase-2': { name: 'HTML', colors: 'Naranja Nebular + Dorado Polvo Estelar', elements: ['header', 'nav', 'main', 'article', 'aside', 'footer'] },
+            'phase-3': { name: 'CSS', colors: 'Púrpura Nebula + Violeta Galáctico', elements: ['header-style', 'nav-style', 'main-style'] },
+            'phase-4': { name: 'JAVASCRIPT', colors: 'Rojo Marte + Blanco Lunar', elements: ['button-event', 'form-event', 'input-event'] }
+        };
+        
+        // Configuración de juegos
+        this.gameConfigs = {
+            html: {
+                title: '🧩 Piezas HTML',
+                description: 'Arrastra las etiquetas a su posición correcta',
+                pieces: ['header', 'nav', 'main', 'article', 'aside', 'footer'],
+                completionMessage: '¡Estructura HTML completada! Pasando al juego de CSS...'
+            },
+            css: {
+                title: '🎨 Propiedades CSS',
+                description: 'Aplica los estilos correctos a cada elemento',
+                pieces: ['background-color', 'color', 'padding', 'display', 'justify-content', 'gap', 'max-width', 'margin'],
+                completionMessage: '¡Estilos CSS aplicados! Pasando al juego de JavaScript...'
+            },
+            js: {
+                title: '⚡ Funciones JavaScript',
+                description: 'Conecta los eventos con sus funciones',
+                pieces: ['showAlert', 'validateForm', 'updateValue', 'toggleMenu'],
+                completionMessage: '¡Lógica JavaScript completada! ¡Eres un desarrollador web completo!'
+            }
+        };
+        
+        this.completedPhases = [];
+        this.completedGames = [];
         this.isGameStarted = false;
         this.validator = null;
         this.init();
@@ -46,6 +82,9 @@ class HTMLSemanticGame {
 
         // Configurar validación en tiempo real
         this.setupRealTimeValidation();
+        
+        // Configurar sonidos de interfaz
+        this.setupUIAudioEvents();
 
         playerForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -59,7 +98,7 @@ class HTMLSemanticGame {
      * Configura la validación en tiempo real
      */
     setupRealTimeValidation() {
-        const fields = ['playerName', 'playerEmail', 'playerLevel'];
+        const fields = ['playerName', 'playerEmail', 'playerPhone', 'playerLevel'];
         
         fields.forEach(fieldName => {
             const field = document.getElementById(fieldName);
@@ -83,9 +122,49 @@ class HTMLSemanticGame {
             field.addEventListener('change', () => {
                 this.validateFieldRealTime(fieldName, field.value);
             });
+            
+            // Sonidos de interacción
+            field.addEventListener('focus', () => {
+                if (window.GameAudio) {
+                    window.GameAudio.playSound('focus', { volume: 0.3 });
+                }
+            });
         });
 
         console.log('⚡ Validación en tiempo real configurada');
+    }
+
+    /**
+     * Configura eventos de audio para la interfaz
+     */
+    setupUIAudioEvents() {
+        // Sonidos para todos los botones
+        const buttons = document.querySelectorAll('button, [role="button"]');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (window.GameAudio) {
+                    window.GameAudio.playSound('click', { volume: 0.4 });
+                }
+            });
+            
+            button.addEventListener('mouseenter', () => {
+                if (window.GameAudio) {
+                    window.GameAudio.playSound('hover', { volume: 0.2 });
+                }
+            });
+        });
+
+        // Sonidos para elementos arrastrables
+        const pieces = document.querySelectorAll('.piece');
+        pieces.forEach(piece => {
+            piece.addEventListener('mouseenter', () => {
+                if (window.GameAudio && piece.draggable) {
+                    window.GameAudio.playSound('hover', { volume: 0.2, pitch: 1.1 });
+                }
+            });
+        });
+
+        console.log('🔊 Eventos de audio de interfaz configurados');
     }
 
     /**
@@ -104,8 +183,26 @@ class HTMLSemanticGame {
             field.setSelectionRange(cursorPosition, cursorPosition);
         }
 
+        // Obtener el estado anterior para evitar sonidos repetidos
+        const previousState = field.dataset.validationState || 'none';
+        
         const validation = this.validator.validateField(fieldName, sanitizedValue);
         this.validator.showFieldFeedback(field, validation);
+        
+        // Determinar el estado actual
+        const currentState = validation.isValid ? 'valid' : (validation.errors.length > 0 ? 'invalid' : 'empty');
+        
+        // Sonidos de validación solo si el estado cambió
+        if (window.GameAudio && previousState !== currentState) {
+            if (validation.isValid && previousState !== 'valid') {
+                window.GameAudio.playSound('validation_success', { volume: 0.3 });
+            } else if (validation.errors.length > 0 && previousState !== 'invalid') {
+                window.GameAudio.playSound('validation_error', { volume: 0.2 });
+            }
+        }
+        
+        // Guardar el estado actual
+        field.dataset.validationState = currentState;
         
         // Actualizar progreso del formulario
         this.updateFormProgress();
@@ -121,6 +218,7 @@ class HTMLSemanticGame {
         const types = {
             'playerName': 'name',
             'playerEmail': 'email',
+            'playerPhone': 'phone',
             'playerLevel': 'select'
         };
         return types[fieldName] || 'text';
@@ -210,10 +308,16 @@ class HTMLSemanticGame {
         // Sanitizar y asignar datos
         this.player.name = this.validator.sanitizeValue(formData.get('playerName'), 'name');
         this.player.email = this.validator.sanitizeValue(formData.get('playerEmail'), 'email');
+        this.player.phone = this.validator.sanitizeValue(formData.get('playerPhone'), 'phone');
         this.player.level = this.validator.sanitizeValue(formData.get('playerLevel'), 'select');
 
         // Guardar en localStorage para persistencia
         this.savePlayerData();
+
+        // Sonido de formulario completado
+        if (window.GameAudio) {
+            window.GameAudio.playSound('form-complete', { volume: 0.8 });
+        }
 
         this.startGameTransition();
     }
@@ -226,6 +330,7 @@ class HTMLSemanticGame {
             const playerData = {
                 name: this.player.name,
                 email: this.player.email,
+                phone: this.player.phone,
                 level: this.player.level,
                 registrationDate: new Date().toISOString()
             };
@@ -265,14 +370,45 @@ class HTMLSemanticGame {
      * Inicializa el juego después del registro
      */
     initializeGame() {
+        this.currentGame = 'html';
         this.setupElements();
         this.setupEventListeners();
         this.updatePlayerDisplay();
         this.updateStats();
         this.updateScoreBoard();
         this.addAchievement('🎯', 'Primer paso', 'Te has registrado exitosamente');
+        this.changeGamePhase('phase-2'); // Cambiamos a HTML
+        this.showCurrentGame();
         this.isGameStarted = true;
         console.log('🎮 Juego inicializado');
+    }
+
+    /**
+     * Cambia la fase visual del juego
+     */
+    changeGamePhase(newPhase) {
+        // Remover clase de fase anterior
+        document.body.classList.remove(this.gamePhase);
+        
+        // Agregar nueva fase
+        this.gamePhase = newPhase;
+        document.body.classList.add(newPhase);
+        
+        // Reproducir sonido de transición
+        if (window.GameAudio) {
+            window.GameAudio.playSound('levelUp');
+        }
+        
+        // Mostrar notificación de nueva fase
+        const phaseInfo = this.gamePhases[newPhase];
+        if (phaseInfo) {
+            this.showNotification(
+                `🌟 NUEVA FASE: ${phaseInfo.name} - ${phaseInfo.colors}`,
+                'success'
+            );
+        }
+        
+        console.log(`🎨 Cambiado a ${newPhase}: ${phaseInfo?.name || 'Desconocida'}`);
     }
 
     /**
@@ -299,24 +435,141 @@ class HTMLSemanticGame {
      * Configura todos los event listeners
      */
     setupEventListeners() {
-        // Event listeners para las piezas
-        this.pieces.forEach(piece => {
-            piece.addEventListener('dragstart', (e) => this.handleDragStart(e));
-            piece.addEventListener('dragend', (e) => this.handleDragEnd(e));
-        });
-
-        // Event listeners para las zonas de destino
-        this.dropZones.forEach(zone => {
-            zone.addEventListener('dragover', (e) => this.handleDragOver(e));
-            zone.addEventListener('dragenter', (e) => this.handleDragEnter(e));
-            zone.addEventListener('dragleave', (e) => this.handleDragLeave(e));
-            zone.addEventListener('drop', (e) => this.handleDrop(e));
-        });
+        // Event listeners dinámicos para el juego actual
+        this.updateEventListeners();
 
         // Event listener para el botón de reset
         this.resetButton.addEventListener('click', () => this.resetGame());
 
+        // Event listener para el control de audio
+        const audioToggle = document.getElementById('audio-toggle');
+        if (audioToggle) {
+            audioToggle.addEventListener('click', () => {
+                if (window.GameAudio) {
+                    const isMuted = window.GameAudio.toggleMute();
+                    audioToggle.textContent = isMuted ? '🔇' : '🔊';
+                    audioToggle.classList.toggle('muted', isMuted);
+                    audioToggle.title = isMuted ? 'Activar sonido' : 'Silenciar sonido';
+                }
+            });
+        }
+
         console.log('🔧 Event listeners configurados');
+    }
+
+    /**
+     * Actualiza los event listeners para el juego actual
+     */
+    updateEventListeners() {
+        // Remover listeners anteriores si existen
+        if (this.currentListeners) {
+            this.currentListeners.forEach(({element, event, handler}) => {
+                element.removeEventListener(event, handler);
+            });
+        }
+        
+        this.currentListeners = [];
+        
+        // Configurar listeners según el juego actual
+        if (this.currentGame === 'html') {
+            // Listeners para piezas HTML
+            this.pieces.forEach(piece => {
+                const dragStartHandler = (e) => this.handleDragStart(e);
+                const dragEndHandler = (e) => this.handleDragEnd(e);
+                
+                piece.addEventListener('dragstart', dragStartHandler);
+                piece.addEventListener('dragend', dragEndHandler);
+                
+                this.currentListeners.push(
+                    {element: piece, event: 'dragstart', handler: dragStartHandler},
+                    {element: piece, event: 'dragend', handler: dragEndHandler}
+                );
+            });
+
+            // Listeners para zonas de destino HTML
+            this.dropZones.forEach(zone => {
+                const dragOverHandler = (e) => this.handleDragOver(e);
+                const dragEnterHandler = (e) => this.handleDragEnter(e);
+                const dragLeaveHandler = (e) => this.handleDragLeave(e);
+                const dropHandler = (e) => this.handleDrop(e);
+                
+                zone.addEventListener('dragover', dragOverHandler);
+                zone.addEventListener('dragenter', dragEnterHandler);
+                zone.addEventListener('dragleave', dragLeaveHandler);
+                zone.addEventListener('drop', dropHandler);
+                
+                this.currentListeners.push(
+                    {element: zone, event: 'dragover', handler: dragOverHandler},
+                    {element: zone, event: 'dragenter', handler: dragEnterHandler},
+                    {element: zone, event: 'dragleave', handler: dragLeaveHandler},
+                    {element: zone, event: 'drop', handler: dropHandler}
+                );
+            });
+            
+        } else if (this.currentGame === 'css') {
+            // Listeners para piezas CSS
+            const cssPieces = document.querySelectorAll('.css-piece');
+            cssPieces.forEach(piece => {
+                const dragStartHandler = (e) => this.handleCSSStart(e);
+                const dragEndHandler = (e) => this.handleDragEnd(e);
+                
+                piece.addEventListener('dragstart', dragStartHandler);
+                piece.addEventListener('dragend', dragEndHandler);
+                
+                this.currentListeners.push(
+                    {element: piece, event: 'dragstart', handler: dragStartHandler},
+                    {element: piece, event: 'dragend', handler: dragEndHandler}
+                );
+            });
+
+            // Listeners para slots CSS
+            const cssSlots = document.querySelectorAll('.property-slot');
+            cssSlots.forEach(slot => {
+                const dragOverHandler = (e) => this.handleDragOver(e);
+                const dropHandler = (e) => this.handleCSSDrop(e);
+                
+                slot.addEventListener('dragover', dragOverHandler);
+                slot.addEventListener('drop', dropHandler);
+                
+                this.currentListeners.push(
+                    {element: slot, event: 'dragover', handler: dragOverHandler},
+                    {element: slot, event: 'drop', handler: dropHandler}
+                );
+            });
+            
+        } else if (this.currentGame === 'js') {
+            // Listeners para piezas JavaScript
+            const jsPieces = document.querySelectorAll('.js-piece');
+            jsPieces.forEach(piece => {
+                const dragStartHandler = (e) => this.handleJSStart(e);
+                const dragEndHandler = (e) => this.handleDragEnd(e);
+                
+                piece.addEventListener('dragstart', dragStartHandler);
+                piece.addEventListener('dragend', dragEndHandler);
+                
+                this.currentListeners.push(
+                    {element: piece, event: 'dragstart', handler: dragStartHandler},
+                    {element: piece, event: 'dragend', handler: dragEndHandler}
+                );
+            });
+
+            // Listeners para slots JavaScript
+            const jsSlots = document.querySelectorAll('.event-slot');
+            jsSlots.forEach(slot => {
+                const dragOverHandler = (e) => this.handleDragOver(e);
+                const dropHandler = (e) => this.handleJSDrop(e);
+                
+                slot.addEventListener('dragover', dragOverHandler);
+                slot.addEventListener('drop', dropHandler);
+                
+                this.currentListeners.push(
+                    {element: slot, event: 'dragover', handler: dragOverHandler},
+                    {element: slot, event: 'drop', handler: dropHandler}
+                );
+            });
+        }
+
+        console.log(`🔧 Event listeners actualizados para el juego: ${this.currentGame}`);
     }
 
     /**
@@ -325,6 +578,11 @@ class HTMLSemanticGame {
     handleDragStart(event) {
         const piece = event.target;
         const tagType = piece.getAttribute('data-tag');
+        
+        // Sonido de inicio de arrastre
+        if (window.GameAudio) {
+            window.GameAudio.playSound('drag-start', { volume: 0.4 });
+        }
         
         // Guardar información en dataTransfer
         event.dataTransfer.setData('text/plain', tagType);
@@ -361,6 +619,11 @@ class HTMLSemanticGame {
         // Solo aplicar estilo si la zona no está ocupada
         if (!dropZone.classList.contains('occupied')) {
             dropZone.classList.add('drag-over');
+            
+            // Sonido sutil de hover sobre zona válida
+            if (window.GameAudio) {
+                window.GameAudio.playSound('drag-over', { volume: 0.2 });
+            }
         }
     }
 
@@ -437,9 +700,14 @@ class HTMLSemanticGame {
         // Actualizar puntaje y racha
         this.updateScore(true);
         
-        // Efectos visuales
+        // Efectos visuales y sonoros
         this.showFeedback(dropZone, true, '¡Excelente!');
         dropZone.classList.add('success-animation');
+        
+        // Sonido de colocación exitosa
+        if (window.GameAudio) {
+            window.GameAudio.playSound('drop-success', { volume: 0.7 });
+        }
         
         // Remover animación después de un tiempo
         setTimeout(() => {
@@ -447,6 +715,9 @@ class HTMLSemanticGame {
         }, 600);
         
         console.log(`✅ Colocación correcta: ${tagType}`);
+        
+        // Verificar progresión de fases
+        this.checkPhaseProgression(tagType);
         
         // Verificar si el juego está completo
         this.checkGameCompletion();
@@ -459,9 +730,14 @@ class HTMLSemanticGame {
         // Actualizar puntaje (rompe la racha)
         this.updateScore(false);
         
-        // Efectos visuales de error
+        // Efectos visuales y sonoros de error
         this.showFeedback(dropZone, false, '¡Intenta de nuevo!');
         dropZone.classList.add('error-animation');
+        
+        // Sonido de error
+        if (window.GameAudio) {
+            window.GameAudio.playSound('drop-error', { volume: 0.6 });
+        }
         
         // Remover animación después de un tiempo
         setTimeout(() => {
@@ -539,6 +815,11 @@ class HTMLSemanticGame {
         this.showNotification('🎉 ¡Felicitaciones! Has completado el juego', 'success');
         this.addAchievement('🏆', 'Maestro HTML', 'Has completado todos los elementos');
         
+        // Sonido de victoria del juego
+        if (window.GameAudio) {
+            window.GameAudio.playSound('game-complete', { volume: 1.0 });
+        }
+        
         console.log('🎉 Juego completado');
     }
 
@@ -547,6 +828,11 @@ class HTMLSemanticGame {
      */
     resetGame() {
         console.log('🔄 Reiniciando juego...');
+        
+        // Sonido de reset
+        if (window.GameAudio) {
+            window.GameAudio.playSound('reset', { volume: 0.5 });
+        }
         
         // Reiniciar estadísticas
         this.gameStats.correctPlacements = 0;
@@ -619,8 +905,14 @@ class HTMLSemanticGame {
             // Verificar logros de racha
             if (this.player.streak === 3) {
                 this.addAchievement('🔥', 'En Racha', 'Conseguiste 3 aciertos seguidos');
+                if (window.GameAudio) {
+                    window.GameAudio.playSound('streak', { volume: 0.6 });
+                }
             } else if (this.player.streak === 5) {
                 this.addAchievement('⚡', 'Imparable', 'Conseguiste 5 aciertos seguidos');
+                if (window.GameAudio) {
+                    window.GameAudio.playSound('streak', { volume: 0.8, pitch: 1.2 });
+                }
             }
         } else {
             this.player.streak = 0;
@@ -642,6 +934,11 @@ class HTMLSemanticGame {
             
             this.addAchievement('🏆', `Nivel ${this.player.currentLevel}`, 'Has subido de nivel');
             this.showNotification(`¡Felicidades! Has alcanzado el nivel ${this.player.currentLevel}`, 'success');
+            
+            // Sonido de subida de nivel
+            if (window.GameAudio) {
+                window.GameAudio.playSound('level-up', { volume: 0.9 });
+            }
         }
     }
 
@@ -710,6 +1007,11 @@ class HTMLSemanticGame {
         
         this.updateAchievements();
         this.showAchievementNotification(achievement);
+        
+        // Sonido de logro desbloqueado
+        if (window.GameAudio) {
+            window.GameAudio.playSound('achievement', { volume: 0.8 });
+        }
     }
 
     /**
@@ -817,6 +1119,11 @@ class HTMLSemanticGame {
      * Muestra notificaciones generales
      */
     showNotification(message, type = 'info') {
+        // Sonido de notificación (solo para info, otros tipos ya tienen sus sonidos)
+        if (type === 'info' && window.GameAudio) {
+            window.GameAudio.playSound('notification', { volume: 0.5 });
+        }
+        
         const notification = document.createElement('div');
         notification.textContent = message;
         
@@ -850,6 +1157,859 @@ class HTMLSemanticGame {
                     document.body.removeChild(notification);
                 }
             }, 300);
+        }, 3000);
+    }
+
+    /**
+     * Verifica la progresión entre fases basada en elementos completados
+     */
+    checkPhaseProgression(tagType) {
+        // Agregar elemento completado a la fase actual
+        if (!this.completedPhases.includes(tagType)) {
+            this.completedPhases.push(tagType);
+        }
+        
+        // Solo verificar progresión para juego HTML
+        if (this.currentGame === 'html') {
+            // Verificar si HTML game está completo
+            setTimeout(() => {
+                if (this.checkCurrentGameCompletion()) {
+                    this.completeCurrentGame();
+                }
+            }, 1000);
+        }
+    }
+
+    /**
+     * Desencadena el Big Bang final con todos los colores
+     */
+    triggerBigBang() {
+        // Cambiar a clase Big Bang
+        document.body.classList.add('big-bang');
+        
+        // Mostrar modal después de la animación
+        setTimeout(() => {
+            const modal = document.getElementById('big-bang-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                
+                // Configurar evento del botón de reinicio
+                const restartBtn = document.getElementById('restart-complete-game');
+                if (restartBtn) {
+                    restartBtn.addEventListener('click', () => {
+                        this.restartCompleteGame();
+                    });
+                }
+            }
+        }, 3000);
+        
+        // Reproducir sonido épico
+        if (window.GameAudio) {
+            window.GameAudio.playSequence(['levelUp', 'achievement', 'success'], 500);
+        }
+        
+        console.log('💥 BIG BANG ACTIVADO - ¡Juego completado!');
+    }
+
+    /**
+     * Reinicia completamente el juego desde el formulario
+     */
+    restartCompleteGame() {
+        // Ocultar modal
+        const modal = document.getElementById('big-bang-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+        
+        // Resetear todas las fases
+        document.body.classList.remove('phase-2', 'phase-3', 'phase-4', 'big-bang');
+        document.body.classList.add('phase-1');
+        
+        // Mostrar pantalla de bienvenida
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const gameContainer = document.getElementById('game-container');
+        
+        if (welcomeScreen && gameContainer) {
+            gameContainer.classList.add('hidden');
+            welcomeScreen.classList.remove('hidden');
+        }
+        
+        // Resetear datos del juego
+        this.gamePhase = 'phase-1';
+        this.completedPhases = [];
+        this.gameStats = { correctPlacements: 0, totalAttempts: 0 };
+        this.player = {
+            name: '', email: '', phone: '', level: '',
+            score: 0, streak: 0, currentLevel: 1,
+            experience: 0, maxExperience: 100, achievements: []
+        };
+        
+        console.log('🔄 Juego reiniciado completamente');
+    }
+
+    /**
+     * Muestra el juego actual (HTML, CSS o JS)
+     */
+    showCurrentGame() {
+        // Ocultar todos los juegos
+        const allGames = document.querySelectorAll('.game-level');
+        allGames.forEach(game => game.classList.add('hidden'));
+
+        // Ocultar todas las piezas
+        const allPieces = document.querySelectorAll('.pieces-container');
+        allPieces.forEach(pieces => pieces.classList.add('hidden'));
+
+        // Mostrar juego actual
+        const currentGameElement = document.getElementById(`${this.currentGame}-game`);
+        const currentPiecesElement = document.getElementById(`${this.currentGame}-pieces`);
+        
+        if (currentGameElement) {
+            currentGameElement.classList.remove('hidden');
+            currentGameElement.classList.add('active');
+        }
+
+        if (currentPiecesElement) {
+            currentPiecesElement.classList.remove('hidden');
+            currentPiecesElement.classList.add('active');
+        }
+
+        // Actualizar título del inventario
+        const config = this.gameConfigs[this.currentGame];
+        const titleElement = document.getElementById('inventory-title');
+        const descriptionElement = document.getElementById('inventory-description');
+        
+        if (titleElement && config) {
+            titleElement.textContent = config.title;
+        }
+        if (descriptionElement && config) {
+            descriptionElement.textContent = config.description;
+        }
+
+        this.setupCurrentGameElements();
+        
+        // Actualizar event listeners para el juego actual
+        this.updateEventListeners();
+    }
+
+    /**
+     * Configura elementos específicos del juego actual
+     */
+    setupCurrentGameElements() {
+        if (this.currentGame === 'html') {
+            this.setupHTMLGame();
+        } else if (this.currentGame === 'css') {
+            this.setupCSSGame();
+        } else if (this.currentGame === 'js') {
+            this.setupJSGame();
+        }
+    }
+
+    /**
+     * Configura el juego HTML (ya existente)
+     */
+    setupHTMLGame() {
+        this.pieces = document.querySelectorAll('#html-pieces .piece');
+        this.dropZones = document.querySelectorAll('#html-game .drop-zone');
+    }
+
+    /**
+     * Configura el juego CSS interactivo gamificado
+     */
+    setupCSSGame() {
+        // Inicializar variables del juego CSS
+        this.cssGameState = {
+            currentChallenge: 1,
+            totalChallenges: 4,
+            score: 0,
+            multiplier: 1,
+            timeRemaining: 180, // 3 minutos
+            challengeStartTime: Date.now(),
+            appliedStyles: {},
+            achievements: {
+                speed: false,
+                precision: false,
+                creativity: false
+            }
+        };
+        
+        // Configurar herramientas CSS
+        this.setupCSSTools();
+        
+        // Configurar controles de vista previa
+        this.setupPreviewControls();
+        
+        // Iniciar timer
+        this.startCSSTimer();
+        
+        // Configurar desafío inicial
+        this.loadCSSChallenge(1);
+        
+        // Configurar botones de acción
+        this.setupCSSActions();
+    }
+
+    /**
+     * Configura el juego JavaScript (completar código)
+     */
+    setupJSGame() {
+        const codeInputs = document.querySelectorAll('.code-input');
+        codeInputs.forEach(input => {
+            input.addEventListener('input', (e) => this.handleCodeInputChange(e));
+            input.addEventListener('blur', (e) => this.validateCodeInput(e));
+        });
+        
+        this.jsProgress = {
+            completed: 0,
+            total: 4
+        };
+        
+        this.updateJSProgress();
+    }
+
+    /**
+     * Configura las herramientas CSS interactivas
+     */
+    setupCSSTools() {
+        const cssTools = document.querySelectorAll('.css-tool');
+        cssTools.forEach(tool => {
+            tool.addEventListener('click', (e) => this.applyCSSProperty(e));
+        });
+    }
+    
+    /**
+     * Configura controles de vista previa
+     */
+    setupPreviewControls() {
+        const previewSizes = document.querySelectorAll('.preview-size');
+        previewSizes.forEach(btn => {
+            btn.addEventListener('click', (e) => this.changePreviewSize(e));
+        });
+    }
+    
+    /**
+     * Configura acciones del juego CSS
+     */
+    setupCSSActions() {
+        const resetBtn = document.getElementById('reset-css-element');
+        const hintBtn = document.getElementById('css-hint-btn');
+        
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => this.resetCurrentElement());
+        }
+        
+        if (hintBtn) {
+            hintBtn.addEventListener('click', () => this.showCSSHint());
+        }
+    }
+    
+    /**
+     * Aplica una propiedad CSS al elemento objetivo
+     */
+    applyCSSProperty(event) {
+        const tool = event.target;
+        const property = tool.dataset.property;
+        const value = tool.dataset.value;
+        const currentChallenge = this.cssGameState.currentChallenge;
+        
+        // Obtener elemento objetivo actual
+        const targetElement = document.getElementById(`target-element-${currentChallenge}`);
+        if (!targetElement) return;
+        
+        // Aplicar estilo
+        targetElement.style[property] = value;
+        
+        // Guardar estilo aplicado
+        if (!this.cssGameState.appliedStyles[currentChallenge]) {
+            this.cssGameState.appliedStyles[currentChallenge] = {};
+        }
+        this.cssGameState.appliedStyles[currentChallenge][property] = value;
+        
+        // Actualizar panel de estilos
+        this.updateAppliedStylesDisplay();
+        
+        // Verificar si se completó el desafío
+        this.checkChallengeCompletion();
+        
+        // Efectos visuales
+        tool.classList.add('used');
+        setTimeout(() => tool.classList.remove('used'), 300);
+        
+        if (window.GameAudio) {
+            window.GameAudio.playSound('interface-click');
+        }
+    }
+    
+    /**
+     * Verifica si el desafío actual está completo
+     */
+    checkChallengeCompletion() {
+        const currentChallenge = this.cssGameState.currentChallenge;
+        const appliedStyles = this.cssGameState.appliedStyles[currentChallenge] || {};
+        let isComplete = false;
+        
+        // Definir condiciones de éxito para cada desafío
+        switch (currentChallenge) {
+            case 1: // Centrar elemento
+                isComplete = appliedStyles.margin === '0 auto' || 
+                           (appliedStyles.display === 'flex' && appliedStyles['justify-content'] === 'center');
+                break;
+            case 2: // Degradado
+                isComplete = appliedStyles.background && 
+                           (appliedStyles.background.includes('linear-gradient') || 
+                            appliedStyles.background.includes('radial-gradient'));
+                break;
+            case 3: // Layout responsive
+                isComplete = appliedStyles.display === 'grid' && 
+                           appliedStyles['grid-template-columns'];
+                break;
+            case 4: // Efectos
+                isComplete = appliedStyles['box-shadow'] && appliedStyles['border-radius'];
+                break;
+        }
+        
+        if (isComplete) {
+            this.completeCSSChallenge();
+        }
+    }
+    
+    /**
+     * Completa el desafío CSS actual
+     */
+    completeCSSChallenge() {
+        const currentChallenge = this.cssGameState.currentChallenge;
+        const successIndicator = document.getElementById(`success-${currentChallenge}`);
+        
+        // Mostrar indicador de éxito
+        if (successIndicator) {
+            successIndicator.style.display = 'block';
+            successIndicator.classList.add('animate-success');
+        }
+        
+        // Calcular puntuación
+        const timeBonus = this.calculateTimeBonus();
+        const baseScore = 1000;
+        const finalScore = Math.round((baseScore + timeBonus) * this.cssGameState.multiplier);
+        
+        this.cssGameState.score += finalScore;
+        this.updateCSSScore();
+        
+        // Verificar logros
+        this.checkCSSAchievements();
+        
+        // Efectos de audio
+        if (window.GameAudio) {
+            window.GameAudio.playSound('challenge-complete');
+        }
+        
+        // Avanzar al siguiente desafío
+        setTimeout(() => {
+            if (this.cssGameState.currentChallenge < this.cssGameState.totalChallenges) {
+                this.loadNextCSSChallenge();
+            } else {
+                this.completeCSSGame();
+            }
+        }, 2000);
+    }
+    
+    /**
+     * Carga el siguiente desafío CSS
+     */
+    loadNextCSSChallenge() {
+        this.cssGameState.currentChallenge++;
+        this.cssGameState.challengeStartTime = Date.now();
+        this.loadCSSChallenge(this.cssGameState.currentChallenge);
+    }
+    
+    /**
+     * Carga un desafío CSS específico
+     */
+    loadCSSChallenge(challengeNumber) {
+        // Ocultar todas las vistas previas
+        const allPreviews = document.querySelectorAll('.css-challenge-preview');
+        allPreviews.forEach(preview => {
+            preview.classList.remove('active');
+            preview.style.display = 'none';
+        });
+        
+        // Mostrar vista previa actual
+        const currentPreview = document.getElementById(`challenge-${challengeNumber}-preview`);
+        if (currentPreview) {
+            currentPreview.style.display = 'block';
+            currentPreview.classList.add('active');
+        }
+        
+        // Actualizar información del desafío
+        this.updateChallengeInfo(challengeNumber);
+        
+        // Actualizar barra de progreso
+        this.updateCSSProgress();
+        
+        // Resetear estilos del elemento actual
+        this.resetCurrentElement();
+    }
+    
+    /**
+     * Actualiza información del desafío actual
+     */
+    updateChallengeInfo(challengeNumber) {
+        const challenges = {
+            1: {
+                title: '🎯 Desafío 1: Centrar el elemento',
+                description: 'Haz que el elemento azul se centre horizontalmente en su contenedor'
+            },
+            2: {
+                title: '🌈 Desafío 2: Crear degradado',
+                description: 'Aplica un degradado de colores atractivo al elemento'
+            },
+            3: {
+                title: '📱 Desafío 3: Layout responsive',
+                description: 'Crea un grid responsive que se adapte al tamaño de pantalla'
+            },
+            4: {
+                title: '✨ Desafío 4: Efectos avanzados',
+                description: 'Combina sombras y bordes redondeados para un efecto espectacular'
+            }
+        };
+        
+        const challenge = challenges[challengeNumber];
+        if (challenge) {
+            const titleEl = document.getElementById('css-challenge-title');
+            const descEl = document.getElementById('css-challenge-description');
+            
+            if (titleEl) titleEl.textContent = challenge.title;
+            if (descEl) descEl.textContent = challenge.description;
+        }
+    }
+
+    /**
+     * Inicia el timer del juego CSS
+     */
+    startCSSTimer() {
+        this.cssTimer = setInterval(() => {
+            this.cssGameState.timeRemaining--;
+            this.updateCSSTimerDisplay();
+            
+            if (this.cssGameState.timeRemaining <= 0) {
+                this.handleCSSTimeout();
+            }
+        }, 1000);
+    }
+    
+    /**
+     * Actualiza la visualización del timer
+     */
+    updateCSSTimerDisplay() {
+        const timerEl = document.getElementById('css-timer-display');
+        if (timerEl) {
+            const minutes = Math.floor(this.cssGameState.timeRemaining / 60);
+            const seconds = this.cssGameState.timeRemaining % 60;
+            timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Cambiar color cuando queda poco tiempo
+            if (this.cssGameState.timeRemaining <= 30) {
+                timerEl.style.color = '#ff4757';
+                timerEl.style.animation = 'pulse 1s infinite';
+            }
+        }
+    }
+    
+    /**
+     * Maneja el timeout del juego CSS
+     */
+    handleCSSTimeout() {
+        clearInterval(this.cssTimer);
+        
+        // Mostrar mensaje de tiempo agotado
+        this.showCSSMessage('⏰ ¡Tiempo agotado! Pero puedes continuar sin límite de tiempo.', 'warning');
+        
+        // Permitir continuar sin timer
+        const timerEl = document.getElementById('css-timer-display');
+        if (timerEl) {
+            timerEl.textContent = '∞';
+            timerEl.style.color = '#2ed573';
+        }
+    }
+    
+    /**
+     * Calcula bonus por tiempo
+     */
+    calculateTimeBonus() {
+        const challengeTime = (Date.now() - this.cssGameState.challengeStartTime) / 1000;
+        const maxBonus = 500;
+        const timeLimit = 45; // 45 segundos para bonus máximo
+        
+        if (challengeTime <= timeLimit) {
+            return Math.round(maxBonus * (1 - challengeTime / timeLimit));
+        }
+        return 0;
+    }
+    
+    /**
+     * Actualiza la puntuación CSS
+     */
+    updateCSSScore() {
+        const scoreEl = document.getElementById('css-score');
+        const multiplierEl = document.getElementById('css-multiplier');
+        
+        if (scoreEl) {
+            scoreEl.textContent = this.cssGameState.score.toLocaleString();
+        }
+        
+        if (multiplierEl) {
+            multiplierEl.textContent = `x${this.cssGameState.multiplier}`;
+        }
+    }
+    
+    /**
+     * Actualiza progreso CSS
+     */
+    updateCSSProgress() {
+        const progressFill = document.getElementById('css-progress-fill');
+        const counter = document.getElementById('css-challenge-counter');
+        
+        if (progressFill) {
+            const progress = ((this.cssGameState.currentChallenge - 1) / this.cssGameState.totalChallenges) * 100;
+            progressFill.style.width = `${progress}%`;
+        }
+        
+        if (counter) {
+            counter.textContent = `${this.cssGameState.currentChallenge} / ${this.cssGameState.totalChallenges}`;
+        }
+    }
+    
+    /**
+     * Actualiza la visualización de estilos aplicados
+     */
+    updateAppliedStylesDisplay() {
+        const displayEl = document.getElementById('current-css-display');
+        if (!displayEl) return;
+        
+        const currentChallenge = this.cssGameState.currentChallenge;
+        const styles = this.cssGameState.appliedStyles[currentChallenge] || {};
+        
+        let cssText = '/* Estilos aplicados */\n.elemento {\n';
+        
+        Object.entries(styles).forEach(([property, value]) => {
+            cssText += `  ${property}: ${value};\n`;
+        });
+        
+        cssText += '}';
+        
+        displayEl.textContent = cssText;
+    }
+    
+    /**
+     * Resetea el elemento actual
+     */
+    resetCurrentElement() {
+        const currentChallenge = this.cssGameState.currentChallenge;
+        const targetElement = document.getElementById(`target-element-${currentChallenge}`);
+        
+        if (targetElement) {
+            // Resetear todos los estilos
+            targetElement.removeAttribute('style');
+            
+            // Limpiar estilos guardados
+            if (this.cssGameState.appliedStyles[currentChallenge]) {
+                this.cssGameState.appliedStyles[currentChallenge] = {};
+            }
+            
+            // Actualizar visualización
+            this.updateAppliedStylesDisplay();
+            
+            // Ocultar indicador de éxito
+            const successIndicator = document.getElementById(`success-${currentChallenge}`);
+            if (successIndicator) {
+                successIndicator.style.display = 'none';
+                successIndicator.classList.remove('animate-success');
+            }
+        }
+    }
+    
+    /**
+     * Muestra una pista para el desafío CSS actual
+     */
+    showCSSHint() {
+        const hints = {
+            1: 'Para centrar horizontalmente, intenta usar "margin: 0 auto" o combinar "display: flex" con "justify-content: center"',
+            2: 'Los degradados se crean con "linear-gradient" o "radial-gradient". ¡Experimenta con diferentes colores!',
+            3: 'Un layout responsive necesita "display: grid" y "grid-template-columns" con valores responsivos',
+            4: 'Combina "box-shadow" para sombras y "border-radius" para bordes redondeados'
+        };
+        
+        const hint = hints[this.cssGameState.currentChallenge];
+        if (hint) {
+            this.showCSSMessage(`💡 Pista: ${hint}`, 'info');
+        }
+    }
+    
+    /**
+     * Muestra mensajes del juego CSS
+     */
+    showCSSMessage(message, type = 'info') {
+        // Crear elemento de mensaje si no existe
+        let messageEl = document.getElementById('css-game-message');
+        if (!messageEl) {
+            messageEl = document.createElement('div');
+            messageEl.id = 'css-game-message';
+            messageEl.className = 'css-game-message';
+            document.querySelector('#css-game').appendChild(messageEl);
+        }
+        
+        messageEl.textContent = message;
+        messageEl.className = `css-game-message ${type} show`;
+        
+        // Ocultar después de 4 segundos
+        setTimeout(() => {
+            messageEl.classList.remove('show');
+        }, 4000);
+    }
+    
+    /**
+     * Cambia el tamaño de vista previa
+     */
+    changePreviewSize(event) {
+        const size = event.target.dataset.size;
+        const container = document.getElementById('css-preview-container');
+        
+        if (container) {
+            container.className = `preview-container ${size}`;
+        }
+        
+        // Actualizar botones activos
+        document.querySelectorAll('.preview-size').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+    
+    /**
+     * Verifica logros CSS
+     */
+    checkCSSAchievements() {
+        const challengeTime = (Date.now() - this.cssGameState.challengeStartTime) / 1000;
+        const currentChallenge = this.cssGameState.currentChallenge;
+        const styles = this.cssGameState.appliedStyles[currentChallenge] || {};
+        
+        // Logro de velocidad
+        if (challengeTime <= 30 && !this.cssGameState.achievements.speed) {
+            this.unlockCSSAchievement('speed', '⚡ ¡Velocidad Lightning!');
+            this.cssGameState.multiplier += 0.5;
+        }
+        
+        // Logro de precisión
+        if (Object.keys(styles).length <= 2 && !this.cssGameState.achievements.precision) {
+            this.unlockCSSAchievement('precision', '🎯 ¡Precisión Perfecta!');
+            this.cssGameState.multiplier += 0.3;
+        }
+        
+        // Logro de creatividad
+        if (Object.keys(styles).length >= 4 && !this.cssGameState.achievements.creativity) {
+            this.unlockCSSAchievement('creativity', '🎨 ¡Creatividad Artística!');
+            this.cssGameState.multiplier += 0.4;
+        }
+    }
+    
+    /**
+     * Desbloquea un logro CSS
+     */
+    unlockCSSAchievement(achievement, message) {
+        this.cssGameState.achievements[achievement] = true;
+        
+        const achievementEl = document.getElementById(`${achievement}-achievement`);
+        if (achievementEl) {
+            achievementEl.classList.add('unlocked');
+        }
+        
+        this.showCSSMessage(message, 'success');
+        
+        if (window.GameAudio) {
+            window.GameAudio.playSound('achievement-unlock');
+        }
+    }
+    
+    /**
+     * Completa todo el juego CSS
+     */
+    completeCSSGame() {
+        clearInterval(this.cssTimer);
+        
+        // Calcular bonus final
+        const timeBonus = this.cssGameState.timeRemaining > 0 ? this.cssGameState.timeRemaining * 10 : 0;
+        const achievementBonus = Object.values(this.cssGameState.achievements).filter(Boolean).length * 500;
+        const finalScore = this.cssGameState.score + timeBonus + achievementBonus;
+        
+        // Mostrar resumen final
+        this.showCSSGameSummary(finalScore);
+        
+        // Completar nivel después de mostrar resumen
+        setTimeout(() => {
+            this.completeCurrentGame();
+        }, 3000);
+    }
+    
+    /**
+     * Muestra resumen del juego CSS
+     */
+    showCSSGameSummary(finalScore) {
+        const summary = `
+            🎨 ¡CSS Designer Completado!
+            
+            📊 Puntuación Final: ${finalScore.toLocaleString()}
+            ⏱️ Tiempo Restante: ${this.cssGameState.timeRemaining}s
+            🏆 Logros Desbloqueados: ${Object.values(this.cssGameState.achievements).filter(Boolean).length}/3
+            ⚡ Multiplicador Final: x${this.cssGameState.multiplier}
+            
+            ¡Excelente trabajo como diseñador CSS!
+        `;
+        
+        this.showCSSMessage(summary, 'success');
+    }
+
+    /**
+     * Maneja cambios en inputs de código JavaScript
+     */
+    handleCodeInputChange(event) {
+        const input = event.target;
+        const value = input.value.trim().toLowerCase();
+        const correctAnswer = input.dataset.answer.toLowerCase();
+        
+        // Feedback visual en tiempo real
+        input.classList.remove('correct', 'wrong');
+        
+        if (value === correctAnswer) {
+            input.classList.add('correct');
+        } else if (value.length > 0) {
+            input.classList.add('wrong');
+        }
+    }
+
+    /**
+     * Valida input de código cuando pierde el foco
+     */
+    validateCodeInput(event) {
+        const input = event.target;
+        const value = input.value.trim().toLowerCase();
+        const correctAnswer = input.dataset.answer.toLowerCase();
+        const challengeCard = input.closest('.challenge-card');
+        const statusElement = challengeCard.querySelector('.challenge-status');
+        
+        if (value === correctAnswer) {
+            input.classList.add('correct');
+            input.classList.remove('wrong');
+            
+            // Verificar si todos los inputs de este desafío están correctos
+            const allInputs = challengeCard.querySelectorAll('.code-input');
+            const correctInputs = challengeCard.querySelectorAll('.code-input.correct');
+            
+            if (allInputs.length === correctInputs.length) {
+                statusElement.textContent = '✅ ¡Desafío completado!';
+                statusElement.className = 'challenge-status correct';
+                
+                // Marcar este desafío como completado si no lo estaba
+                if (!challengeCard.dataset.completed) {
+                    challengeCard.dataset.completed = 'true';
+                    this.jsProgress.completed++;
+                    this.updateScore(true);
+                    
+                    if (window.GameAudio) {
+                        window.GameAudio.playSound('drop-success');
+                    }
+                    
+                    this.updateJSProgress();
+                    
+                    // Verificar si el juego JS está completo
+                    if (this.jsProgress.completed === this.jsProgress.total) {
+                        setTimeout(() => {
+                            this.completeCurrentGame();
+                        }, 1500);
+                    }
+                }
+            }
+        } else if (value.length > 0) {
+            input.classList.add('wrong');
+            input.classList.remove('correct');
+            
+            if (window.GameAudio) {
+                window.GameAudio.playSound('validation-error');
+            }
+        }
+    }
+
+    /**
+     * Actualiza progreso JavaScript
+     */
+    updateJSProgress() {
+        const progressText = document.getElementById('js-progress-text');
+        const progressFill = document.getElementById('js-progress-fill');
+        
+        if (progressText) {
+            progressText.textContent = `${this.jsProgress.completed} / ${this.jsProgress.total} ejercicios completados`;
+        }
+        
+        if (progressFill) {
+            const percentage = (this.jsProgress.completed / this.jsProgress.total) * 100;
+            progressFill.style.width = `${percentage}%`;
+        }
+    }
+
+    /**
+     * Avanza al siguiente juego
+     */
+    advanceToNextGame() {
+        this.completedGames.push(this.currentGame);
+        
+        if (this.currentGame === 'html') {
+            this.currentGame = 'css';
+            this.changeGamePhase('phase-3');
+            this.showCurrentGame();
+            setTimeout(() => {
+                this.showNotification('🎨 ¡Nivel CSS desbloqueado! Ahora aprende a dar estilo a tus elementos', 'success');
+            }, 1000);
+        } else if (this.currentGame === 'css') {
+            this.currentGame = 'js';
+            this.changeGamePhase('phase-4');
+            this.showCurrentGame();
+            setTimeout(() => {
+                this.showNotification('⚡ ¡Nivel JavaScript desbloqueado! Agrega interactividad a tu web', 'success');
+            }, 1000);
+        } else if (this.currentGame === 'js') {
+            // Todos los juegos completados
+            setTimeout(() => this.triggerBigBang(), 2000);
+        }
+    }
+
+    /**
+     * Verifica si el juego actual está completo
+     */
+    checkCurrentGameCompletion() {
+        if (this.currentGame === 'html') {
+            const htmlPieces = ['header', 'nav', 'main', 'article', 'aside', 'footer'];
+            return htmlPieces.every(piece => this.completedPhases.includes(piece));
+        } else if (this.currentGame === 'css') {
+            return this.cssProgress && this.cssProgress.completed >= this.cssProgress.total;
+        } else if (this.currentGame === 'js') {
+            return this.jsProgress && this.jsProgress.completed >= this.jsProgress.total;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Completa el juego actual y avanza al siguiente
+     */
+    completeCurrentGame() {
+        const config = this.gameConfigs[this.currentGame];
+        this.showNotification(config.completionMessage, 'success');
+        
+        if (this.currentGame === 'html') {
+            this.addAchievement('🏗️', 'Maestro HTML', 'Has dominado la estructura HTML');
+        } else if (this.currentGame === 'css') {
+            this.addAchievement('🎨', 'Maestro CSS', 'Has dominado los estilos CSS');
+        } else if (this.currentGame === 'js') {
+            this.addAchievement('⚡', 'Maestro JavaScript', 'Has dominado la lógica JavaScript');
+        }
+        
+        setTimeout(() => {
+            this.advanceToNextGame();
         }, 3000);
     }
 }
