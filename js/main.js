@@ -37,20 +37,26 @@ class HTMLSemanticGame {
         // Configuración de juegos
         this.gameConfigs = {
             html: {
+                headerTitle: '🎯 Aprende HTML Semántico',
+                headerDescription: 'Arrastra las etiquetas HTML a las zonas correctas para construir una página web completa.',
                 title: '🧩 Piezas HTML',
-                description: 'Arrastra las etiquetas a su posición correcta',
+                description: 'Despliega cada componente en la consola principal para desbloquear el hiperimpulso.',
                 pieces: ['header', 'nav', 'main', 'article', 'aside', 'footer'],
                 completionMessage: '¡Estructura HTML completada! Pasando al juego de CSS...'
             },
             css: {
+                headerTitle: '🎨 Domina los Estilos CSS',
+                headerDescription: 'Activa tu laboratorio de diseño y aplica la combinación perfecta de propiedades para cada desafío.',
                 title: '🎨 Propiedades CSS',
-                description: 'Aplica los estilos correctos a cada elemento',
+                description: 'Sin piezas físicas: utiliza la consola táctica para aplicar los estilos exactos en cada módulo.',
                 pieces: ['background-color', 'color', 'padding', 'display', 'justify-content', 'gap', 'max-width', 'margin'],
                 completionMessage: '¡Estilos CSS aplicados! Pasando al juego de JavaScript...'
             },
             js: {
+                headerTitle: '⚡ Programa la Lógica JavaScript',
+                headerDescription: 'Completa los fragmentos de código para reactivar los sistemas críticos de la nave.',
                 title: '⚡ Funciones JavaScript',
-                description: 'Conecta los eventos con sus funciones',
+                description: 'Ingresa el comando correcto en cada terminal para mantener viva la inteligencia de la nave.',
                 pieces: ['showAlert', 'validateForm', 'updateValue', 'toggleMenu'],
                 completionMessage: '¡Lógica JavaScript completada! ¡Eres un desarrollador web completo!'
             }
@@ -1479,14 +1485,22 @@ class HTMLSemanticGame {
 
         // Actualizar título del inventario
         const config = this.gameConfigs[this.currentGame];
-        const titleElement = document.getElementById('inventory-title');
-        const descriptionElement = document.getElementById('inventory-description');
-        
-        if (titleElement && config) {
-            titleElement.textContent = config.title;
+        const inventoryTitleElement = document.getElementById('inventory-title');
+        const inventoryDescriptionElement = document.getElementById('inventory-description');
+        const headerTitleElement = document.getElementById('game-title');
+        const headerDescriptionElement = document.getElementById('game-description');
+
+        if (inventoryTitleElement && config) {
+            inventoryTitleElement.textContent = config.title;
         }
-        if (descriptionElement && config) {
-            descriptionElement.textContent = config.description;
+        if (inventoryDescriptionElement && config) {
+            inventoryDescriptionElement.textContent = config.description;
+        }
+        if (headerTitleElement && config?.headerTitle) {
+            headerTitleElement.textContent = config.headerTitle;
+        }
+        if (headerDescriptionElement && config?.headerDescription) {
+            headerDescriptionElement.textContent = config.headerDescription;
         }
 
         this.setupCurrentGameElements();
@@ -1533,11 +1547,13 @@ class HTMLSemanticGame {
                 speed: false,
                 precision: false,
                 creativity: false
-            }
+            },
+            completedChallenges: new Set()
         };
         
         // Configurar herramientas CSS
         this.setupCSSTools();
+    this.cacheCSSToolCategories();
         
         // Configurar controles de vista previa
         this.setupPreviewControls();
@@ -1577,6 +1593,17 @@ class HTMLSemanticGame {
         const cssTools = document.querySelectorAll('.css-tool');
         cssTools.forEach(tool => {
             tool.addEventListener('click', (e) => this.applyCSSProperty(e));
+        });
+    }
+
+    /**
+     * Cachea las categorías de herramientas y prepara su estado inicial
+     */
+    cacheCSSToolCategories() {
+        this.cssToolCategories = Array.from(document.querySelectorAll('#css-game .tool-category'));
+        this.cssToolCategories.forEach(category => {
+            category.setAttribute('aria-hidden', 'true');
+            category.classList.remove('is-active', 'is-complete');
         });
     }
     
@@ -1682,6 +1709,13 @@ class HTMLSemanticGame {
     completeCSSChallenge() {
         const currentChallenge = this.cssGameState.currentChallenge;
         const successIndicator = document.getElementById(`success-${currentChallenge}`);
+
+        if (this.cssGameState.completedChallenges.has(currentChallenge)) {
+            return;
+        }
+        this.cssGameState.completedChallenges.add(currentChallenge);
+
+        this.markToolCategoryAsComplete(currentChallenge);
         
         // Mostrar indicador de éxito
         if (successIndicator) {
@@ -1696,6 +1730,7 @@ class HTMLSemanticGame {
         
         this.cssGameState.score += finalScore;
         this.updateCSSScore();
+    this.updateCSSProgress();
         
         // Verificar logros
         this.checkCSSAchievements();
@@ -1747,9 +1782,61 @@ class HTMLSemanticGame {
         
         // Actualizar barra de progreso
         this.updateCSSProgress();
+
+        // Actualizar herramientas disponibles
+        this.updateToolCategoryVisibility(challengeNumber);
         
         // Resetear estilos del elemento actual
         this.resetCurrentElement();
+    }
+
+    /**
+     * Marca la categoría de herramientas como completada
+     */
+    markToolCategoryAsComplete(challengeNumber) {
+        if (!this.cssToolCategories || !this.cssToolCategories.length) {
+            this.cacheCSSToolCategories();
+        }
+
+        const category = document.querySelector(`#css-game .tool-category[data-challenge="${challengeNumber}"]`);
+        if (!category) return;
+
+        category.classList.add('is-complete');
+        category.setAttribute('aria-hidden', 'true');
+
+        // Permitir que la animación se ejecute antes de quitar el estado activo
+        setTimeout(() => {
+            category.classList.remove('is-active');
+        }, 350);
+    }
+
+    /**
+     * Gestiona qué categoría de herramientas está visible
+     */
+    updateToolCategoryVisibility(challengeNumber) {
+        if (!this.cssToolCategories || !this.cssToolCategories.length) {
+            this.cacheCSSToolCategories();
+        }
+
+        this.cssToolCategories.forEach(category => {
+            const categoryNumber = Number(category.dataset.challenge);
+            const isActive = categoryNumber === challengeNumber;
+            const isCompleted = categoryNumber < challengeNumber;
+
+            if (isActive) {
+                category.classList.remove('is-active');
+                category.classList.remove('is-complete');
+                category.removeAttribute('aria-hidden');
+
+                // Forzar reflujo para permitir animación cuando se vuelve visible
+                void category.offsetHeight;
+                category.classList.add('is-active');
+            } else {
+                category.classList.remove('is-active');
+                category.classList.toggle('is-complete', isCompleted);
+                category.setAttribute('aria-hidden', 'true');
+            }
+        });
     }
     
     /**
@@ -1870,14 +1957,20 @@ class HTMLSemanticGame {
     updateCSSProgress() {
         const progressFill = document.getElementById('css-progress-fill');
         const counter = document.getElementById('css-challenge-counter');
+        const progressText = document.getElementById('css-progress-text');
+        const completedCount = this.cssGameState.completedChallenges ? this.cssGameState.completedChallenges.size : 0;
         
         if (progressFill) {
-            const progress = ((this.cssGameState.currentChallenge - 1) / this.cssGameState.totalChallenges) * 100;
+            const progress = (completedCount / this.cssGameState.totalChallenges) * 100;
             progressFill.style.width = `${progress}%`;
         }
         
         if (counter) {
             counter.textContent = `${this.cssGameState.currentChallenge} / ${this.cssGameState.totalChallenges}`;
+        }
+
+        if (progressText) {
+            progressText.textContent = `${completedCount} / ${this.cssGameState.totalChallenges} preguntas completadas`;
         }
     }
     

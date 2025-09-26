@@ -125,8 +125,8 @@
 
         <div class="game-main">
             <header class="game-header">
-                <h1>🎯 Aprende HTML Semántico</h1>
-                <p>Arrastra las etiquetas HTML a las zonas correctas para construir una página web</p>
+                <h1 id="game-title">🎯 Aprende HTML Semántico</h1>
+                <p id="game-description">Arrastra las etiquetas HTML a las zonas correctas para construir una página web</p>
                 
                 <!-- Control de Audio -->
                 <div class="audio-controls">
@@ -202,7 +202,7 @@
                     <div class="css-toolkit">
                         <h4>🛠️ Consola de Estilo</h4>
                         <div class="css-tools">
-                            <div class="tool-category">
+                            <div class="tool-category" data-challenge="1">
                                 <label>Posicionamiento orbital:</label>
                                 <div class="tool-buttons">
                                     <button class="css-tool" data-property="margin" data-value="0 auto">margin: 0 auto</button>
@@ -212,7 +212,7 @@
                                 </div>
                             </div>
                             
-                            <div class="tool-category">
+                            <div class="tool-category" data-challenge="2">
                                 <label>Espectro cromático:</label>
                                 <div class="tool-buttons">
                                     <button class="css-tool" data-property="background" data-value="linear-gradient(45deg, #ff6b6b, #4ecdc4)">Degradado</button>
@@ -221,23 +221,23 @@
                                 </div>
                             </div>
                             
-                            <div class="tool-category">
-                                <label>Efectos atmosféricos:</label>
-                                <div class="tool-buttons">
-                                    <button class="css-tool" data-property="box-shadow" data-value="0 4px 8px rgba(0,0,0,0.3)">Sombra</button>
-                                    <button class="css-tool" data-property="border-radius" data-value="10px">Bordes Redondeados</button>
-                                    <button class="css-tool" data-property="transform" data-value="rotate(15deg)">Rotar</button>
-                                    <button class="css-tool" data-property="transform" data-value="scale(1.2)">Escalar</button>
-                                </div>
-                            </div>
-                            
-                            <div class="tool-category">
+                            <div class="tool-category" data-challenge="3">
                                 <label>Disposición modular:</label>
                                 <div class="tool-buttons">
                                     <button class="css-tool" data-property="display" data-value="grid">display: grid</button>
                                     <button class="css-tool" data-property="grid-template-columns" data-value="repeat(3, 1fr)">3 Columnas</button>
                                     <button class="css-tool" data-property="gap" data-value="20px">Espaciado</button>
                                     <button class="css-tool" data-property="align-items" data-value="center">Alinear Items</button>
+                                </div>
+                            </div>
+
+                            <div class="tool-category" data-challenge="4">
+                                <label>Efectos atmosféricos:</label>
+                                <div class="tool-buttons">
+                                    <button class="css-tool" data-property="box-shadow" data-value="0 4px 8px rgba(0,0,0,0.3)">Sombra</button>
+                                    <button class="css-tool" data-property="border-radius" data-value="10px">Bordes Redondeados</button>
+                                    <button class="css-tool" data-property="transform" data-value="rotate(15deg)">Rotar</button>
+                                    <button class="css-tool" data-property="transform" data-value="scale(1.2)">Escalar</button>
                                 </div>
                             </div>
                         </div>
