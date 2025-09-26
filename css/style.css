@@ -6,17 +6,25 @@
     --phase-1-primary: #4a90e2;      /* Azul galáctico suave */
     --phase-1-secondary: #5cb3cc;    /* Verde agua espacial */
     
-    /* FASE 2: HTML - Colores cálidos galácticos */
-    --phase-2-primary: #d4851f;      /* Naranja nebular suave */
-    --phase-2-secondary: #c9a96e;    /* Dorado polvo estelar */
+    /* FASE 2: HTML - Tonos oficiales */
+    --phase-2-primary: #f16529;      /* HTML Orange */
+    --phase-2-secondary: #ff9a5a;    /* Resplandor coral */
     
-    /* FASE 3: CSS - Colores místicos galácticos */
-    --phase-3-primary: #6b46c1;      /* Púrpura nebula profundo */
-    --phase-3-secondary: #a855f7;    /* Violeta galáctico */
+    /* FASE 3: CSS - Tonos oficiales */
+    --phase-3-primary: #2965f1;      /* CSS Blue */
+    --phase-3-secondary: #6ec5ff;    /* Acento cian */
     
-    /* FASE 4: JAVASCRIPT - Colores finales galácticos */
-    --phase-4-primary: #b91c1c;      /* Rojo marte profundo */
-    --phase-4-secondary: #e5e7eb;    /* Blanco lunar suave */
+    /* FASE 4: JAVASCRIPT - Tonos oficiales */
+    --phase-4-primary: #f7df1e;      /* JS Yellow */
+    --phase-4-secondary: #202124;    /* Base oscura */
+
+    /* Paletas de juego por nivel */
+    --html-primary: var(--phase-2-primary);
+    --html-secondary: var(--phase-2-secondary);
+    --css-primary: var(--phase-3-primary);
+    --css-secondary: var(--phase-3-secondary);
+    --js-primary: var(--phase-4-primary);
+    --js-secondary: #2b2b2b;
     
     /* Colores activos (cambian dinámicamente) */
     --color-primary: var(--phase-1-primary);
@@ -251,43 +259,48 @@ body::after {
 body.phase-1 {
     --color-primary: var(--phase-1-primary);
     --color-secondary: var(--phase-1-secondary);
-    /* Sin variables alpha para no opacar el fondo galáctico */
+    --color-primary-alpha-30: rgba(74, 144, 226, 0.3);
+    --color-primary-alpha-20: rgba(74, 144, 226, 0.2);
+    --color-primary-alpha-15: rgba(74, 144, 226, 0.15);
+    --color-secondary-alpha-25: rgba(92, 179, 204, 0.25);
+    --color-secondary-alpha-15: rgba(92, 179, 204, 0.15);
+    --color-secondary-alpha-10: rgba(92, 179, 204, 0.1);
 }
 
 /* FASE 2: HTML - Naranja nebular suave */
 body.phase-2 {
     --color-primary: var(--phase-2-primary);
     --color-secondary: var(--phase-2-secondary);
-    --color-primary-alpha-30: rgba(212, 133, 31, 0.3);
-    --color-primary-alpha-15: rgba(212, 133, 31, 0.15);
-    --color-primary-alpha-20: rgba(212, 133, 31, 0.2);
-    --color-secondary-alpha-25: rgba(201, 169, 110, 0.25);
-    --color-secondary-alpha-10: rgba(201, 169, 110, 0.1);
-    --color-secondary-alpha-15: rgba(201, 169, 110, 0.15);
+    --color-primary-alpha-30: rgba(241, 101, 41, 0.32);
+    --color-primary-alpha-20: rgba(241, 101, 41, 0.2);
+    --color-primary-alpha-15: rgba(241, 101, 41, 0.15);
+    --color-secondary-alpha-25: rgba(255, 154, 90, 0.25);
+    --color-secondary-alpha-15: rgba(255, 154, 90, 0.15);
+    --color-secondary-alpha-10: rgba(255, 154, 90, 0.1);
 }
 
 /* FASE 3: CSS - Púrpura nebula profundo */
 body.phase-3 {
     --color-primary: var(--phase-3-primary);
     --color-secondary: var(--phase-3-secondary);
-    --color-primary-alpha-30: rgba(107, 70, 193, 0.3);
-    --color-primary-alpha-15: rgba(107, 70, 193, 0.15);
-    --color-primary-alpha-20: rgba(107, 70, 193, 0.2);
-    --color-secondary-alpha-25: rgba(168, 85, 247, 0.25);
-    --color-secondary-alpha-10: rgba(168, 85, 247, 0.1);
-    --color-secondary-alpha-15: rgba(168, 85, 247, 0.15);
+    --color-primary-alpha-30: rgba(41, 101, 241, 0.32);
+    --color-primary-alpha-20: rgba(41, 101, 241, 0.22);
+    --color-primary-alpha-15: rgba(41, 101, 241, 0.16);
+    --color-secondary-alpha-25: rgba(110, 197, 255, 0.25);
+    --color-secondary-alpha-15: rgba(110, 197, 255, 0.15);
+    --color-secondary-alpha-10: rgba(110, 197, 255, 0.1);
 }
 
 /* FASE 4: JAVASCRIPT - Rojo marte profundo */
 body.phase-4 {
     --color-primary: var(--phase-4-primary);
     --color-secondary: var(--phase-4-secondary);
-    --color-primary-alpha-30: rgba(185, 28, 28, 0.3);
-    --color-primary-alpha-15: rgba(185, 28, 28, 0.15);
-    --color-primary-alpha-20: rgba(185, 28, 28, 0.2);
-    --color-secondary-alpha-25: rgba(229, 231, 235, 0.25);
-    --color-secondary-alpha-10: rgba(229, 231, 235, 0.1);
-    --color-secondary-alpha-15: rgba(229, 231, 235, 0.15);
+    --color-primary-alpha-30: rgba(247, 223, 30, 0.32);
+    --color-primary-alpha-20: rgba(247, 223, 30, 0.2);
+    --color-primary-alpha-15: rgba(247, 223, 30, 0.15);
+    --color-secondary-alpha-25: rgba(32, 33, 36, 0.4);
+    --color-secondary-alpha-15: rgba(32, 33, 36, 0.24);
+    --color-secondary-alpha-10: rgba(32, 33, 36, 0.16);
 }
 
 /* FASE FINAL: BIG BANG - Colores galácticos finales */
@@ -3256,6 +3269,662 @@ body.big-bang {
 
 .hidden {
     display: none !important;
+}
+
+/* ===================================
+   REDISEÑO VISUAL DE NIVELES 2025
+   =================================== */
+
+.game-container {
+    background: linear-gradient(140deg, rgba(8, 14, 32, 0.85) 0%, rgba(9, 20, 44, 0.88) 45%, rgba(6, 12, 28, 0.92) 100%);
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 35px 80px rgba(4, 10, 30, 0.55);
+    padding: clamp(1.5rem, 2vw, 3rem);
+    gap: clamp(1.5rem, 2.5vw, 3rem);
+    position: relative;
+    overflow: hidden;
+}
+
+.game-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 45%),
+                radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.05), transparent 40%);
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+.game-main {
+    position: relative;
+    z-index: 1;
+}
+
+.game-header {
+    grid-area: header;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: var(--spacing-6);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-4);
+}
+
+.game-header h1 {
+    font-size: clamp(1.8rem, 2.4vw, 2.4rem);
+    color: var(--color-white);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.game-header p {
+    max-width: 560px;
+    color: rgba(226, 232, 240, 0.85);
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+}
+
+.audio-controls .audio-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    color: var(--color-white);
+    font-size: 1.4rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.audio-controls .audio-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.player-panel {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 90%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 6px solid var(--color-primary);
+    color: var(--color-white);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.player-details h3,
+.score-label,
+.progress-label,
+.achievements h3 {
+    color: rgba(241, 245, 249, 0.95);
+}
+
+.score-board .score-item {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.score-value {
+    color: var(--color-white);
+}
+
+.progress-bar {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, var(--color-secondary), var(--color-primary));
+}
+
+.pieces-inventory {
+    background: linear-gradient(150deg, rgba(18, 23, 45, 0.9) 0%, rgba(10, 12, 28, 0.96) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+    color: rgba(226, 232, 240, 0.9);
+}
+
+.pieces-inventory h2 {
+    color: var(--color-white);
+    font-size: clamp(1.25rem, 2vw, 1.6rem);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.pieces-container.active {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: clamp(0.75rem, 1.5vw, 1.2rem);
+}
+
+.piece {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    color: var(--color-white);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease;
+}
+
+.piece:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 30px rgba(17, 24, 39, 0.4);
+    border-color: var(--color-primary);
+}
+
+.game-stats,
+.css-scoring-panel,
+.bonus-multiplier,
+.score-info {
+    color: rgba(241, 245, 249, 0.92);
+}
+
+.game-stats {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: var(--spacing-4);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.reset-btn {
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: rgba(241, 245, 249, 0.95);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.9rem;
+}
+
+.reset-btn:hover {
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border-color: rgba(255, 255, 255, 0.32);
+}
+
+/* ------------ NIVEL HTML ------------- */
+#html-game {
+    --level-primary: var(--html-primary);
+    --level-secondary: var(--html-secondary);
+    background: linear-gradient(150deg, rgba(241, 101, 41, 0.15) 0%, rgba(40, 16, 6, 0.75) 60%),
+                linear-gradient(25deg, rgba(15, 6, 3, 0.85) 0%, rgba(28, 14, 8, 0.9) 100%);
+    border: 1px solid rgba(241, 101, 41, 0.25);
+    border-radius: 26px;
+    box-shadow: 0 32px 70px rgba(241, 101, 41, 0.25);
+    padding: clamp(1.5rem, 2.5vw, 3rem);
+}
+
+#html-game .level-header h2 {
+    color: rgba(255, 245, 238, 0.95);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+#html-game .level-header p {
+    color: rgba(255, 235, 220, 0.85);
+    max-width: 640px;
+}
+
+#html-game .webpage-template {
+    display: grid;
+    gap: clamp(1rem, 2vw, 1.8rem);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-areas:
+        "header header nav nav"
+        "main main main aside"
+        "article article article aside"
+        "footer footer footer footer";
+    align-items: stretch;
+}
+
+#html-game #drop-header { grid-area: header; }
+#html-game #drop-nav { grid-area: nav; }
+#html-game #drop-main { grid-area: main; }
+#html-game #drop-article { grid-area: article; }
+#html-game #drop-aside { grid-area: aside; }
+#html-game #drop-footer { grid-area: footer; }
+
+#html-game .content-wrapper {
+    display: contents;
+}
+
+#html-game .drop-zone {
+    background: rgba(22, 12, 8, 0.9);
+    border: 1px solid rgba(241, 101, 41, 0.35);
+    border-radius: 22px;
+    padding: clamp(1.4rem, 2vw, 1.8rem);
+    align-items: flex-start;
+    text-align: left;
+    min-height: 140px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 14px 30px rgba(241, 101, 41, 0.2);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease, background 0.25s ease;
+}
+
+#html-game .drop-zone::before {
+    content: attr(data-label-icon);
+}
+
+#html-game #drop-header::before { content: '🚀'; }
+#html-game #drop-nav::before { content: '🧭'; }
+#html-game #drop-main::before { content: '🌐'; }
+#html-game #drop-article::before { content: '📜'; }
+#html-game #drop-aside::before { content: '📡'; }
+#html-game #drop-footer::before { content: '🛬'; }
+
+#html-game .drop-zone::before {
+    font-size: 1.8rem;
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    opacity: 0.9;
+}
+
+#html-game .drop-zone:hover,
+#html-game .drop-zone.drag-over {
+    border-color: rgba(241, 101, 41, 0.65);
+    background: rgba(34, 18, 10, 0.95);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(241, 101, 41, 0.25);
+}
+
+#html-game .zone-label {
+    color: rgba(255, 226, 210, 0.95);
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+}
+
+#html-game .drop-zone small {
+    color: rgba(255, 226, 210, 0.72);
+    line-height: 1.6;
+}
+
+#html-game .drop-zone.occupied {
+    background: linear-gradient(135deg, rgba(241, 101, 41, 0.85), rgba(255, 154, 90, 0.75));
+    border-color: rgba(241, 101, 41, 0.9);
+    box-shadow: 0 24px 45px rgba(241, 101, 41, 0.35);
+}
+
+#html-game .drop-zone.occupied .zone-label,
+#html-game .drop-zone.occupied small {
+    color: rgba(34, 10, 6, 0.92);
+}
+
+/* ------------ NIVEL CSS ------------- */
+#css-game {
+    --level-primary: var(--css-primary);
+    --level-secondary: var(--css-secondary);
+    background: linear-gradient(150deg, rgba(41, 101, 241, 0.16) 0%, rgba(6, 18, 52, 0.92) 80%);
+    border: 1px solid rgba(41, 101, 241, 0.25);
+    border-radius: 26px;
+    box-shadow: 0 28px 70px rgba(41, 101, 241, 0.2);
+    padding: clamp(1.5rem, 2.5vw, 3rem);
+}
+
+#css-game .level-header h2 {
+    color: rgba(226, 240, 255, 0.95);
+    letter-spacing: 0.1em;
+}
+
+#css-game .level-header p {
+    color: rgba(200, 224, 255, 0.8);
+}
+
+#css-game .css-designer-workspace {
+    display: grid;
+    grid-template-columns: minmax(320px, 360px) minmax(0, 1fr);
+    gap: clamp(1.2rem, 2vw, 2.5rem);
+    align-items: start;
+}
+
+#css-game .css-control-panel {
+    background: linear-gradient(180deg, rgba(8, 22, 66, 0.92) 0%, rgba(5, 15, 46, 0.92) 100%);
+    border: 1px solid rgba(41, 101, 241, 0.32);
+    border-radius: 22px;
+    padding: clamp(1.2rem, 2vw, 2rem);
+    box-shadow: 0 22px 60px rgba(6, 18, 60, 0.45);
+}
+
+#css-game .challenge-info h3 {
+    color: rgba(173, 209, 255, 0.95);
+    font-size: 1.2rem;
+}
+
+#css-game .challenge-info p,
+#css-game .css-info p {
+    color: rgba(181, 212, 255, 0.78);
+    line-height: 1.5;
+}
+
+#css-game .css-tools {
+    display: grid;
+    gap: 1.2rem;
+}
+
+#css-game .tool-category label {
+    color: rgba(173, 209, 255, 0.8);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+#css-game .tool-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+}
+
+#css-game .css-tool {
+    background: linear-gradient(135deg, rgba(41, 101, 241, 0.22) 0%, rgba(110, 197, 255, 0.18) 100%);
+    border: 1px solid rgba(110, 197, 255, 0.45);
+    border-radius: 14px;
+    color: rgba(226, 240, 255, 0.95);
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    transition: transform 0.2s ease, box-shadow 0.25s ease, border 0.25s ease;
+}
+
+#css-game .css-tool:hover,
+#css-game .css-tool:focus-visible {
+    transform: translateY(-3px);
+    border-color: rgba(173, 209, 255, 0.85);
+    box-shadow: 0 16px 30px rgba(41, 101, 241, 0.28);
+}
+
+#css-game .css-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.2rem;
+}
+
+#css-game .css-actions button {
+    flex: 1 1 150px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(173, 209, 255, 0.4);
+    border-radius: 12px;
+    color: rgba(226, 240, 255, 0.92);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: transform 0.25s ease;
+}
+
+#css-game .css-actions button:hover {
+    transform: translateY(-3px);
+}
+
+#css-game .css-preview-area {
+    background: linear-gradient(180deg, rgba(5, 10, 32, 0.9) 0%, rgba(3, 7, 25, 0.94) 100%);
+    border: 1px solid rgba(41, 101, 241, 0.28);
+    border-radius: 22px;
+    padding: clamp(1.2rem, 2vw, 2rem);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+#css-game .preview-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+#css-game .preview-header h4 {
+    color: rgba(226, 240, 255, 0.88);
+    letter-spacing: 0.08em;
+}
+
+#css-game .preview-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#css-game .preview-size {
+    background: rgba(41, 101, 241, 0.18);
+    border: 1px solid rgba(110, 197, 255, 0.45);
+    border-radius: 12px;
+    color: rgba(226, 240, 255, 0.92);
+    padding: 0.45rem 0.85rem;
+    font-weight: 600;
+    transition: transform 0.2s ease, border 0.2s ease;
+}
+
+#css-game .preview-size:hover,
+#css-game .preview-size.active {
+    border-color: rgba(173, 209, 255, 0.85);
+    transform: translateY(-2px);
+}
+
+#css-game .preview-container {
+    background: linear-gradient(135deg, rgba(10, 20, 50, 0.8), rgba(10, 26, 68, 0.9));
+    border-radius: 18px;
+    border: 1px dashed rgba(110, 197, 255, 0.25);
+    padding: clamp(1rem, 1.8vw, 1.5rem);
+    min-height: 320px;
+}
+
+#css-game .target-container {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    border: 1px solid rgba(110, 197, 255, 0.25);
+}
+
+#css-game .target-element,
+#css-game .grid-item {
+    background: rgba(41, 101, 241, 0.12);
+    border-radius: 12px;
+    border: 1px solid rgba(110, 197, 255, 0.18);
+    color: rgba(226, 240, 255, 0.9);
+}
+
+#css-game .css-scoring-panel {
+    margin-top: clamp(1.5rem, 2vw, 2.5rem);
+    background: linear-gradient(135deg, rgba(41, 101, 241, 0.22), rgba(110, 197, 255, 0.18));
+    border: 1px solid rgba(41, 101, 241, 0.32);
+    border-radius: 18px;
+    box-shadow: 0 22px 50px rgba(6, 18, 60, 0.45);
+}
+
+#css-game .multiplier-value,
+#css-game .score-value {
+    color: rgba(226, 240, 255, 0.95);
+}
+
+#css-game .achievements .achievement {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(110, 197, 255, 0.35);
+    border-radius: 12px;
+    color: rgba(226, 240, 255, 0.85);
+}
+
+#css-game .achievements .achievement.unlocked {
+    background: rgba(110, 197, 255, 0.2);
+    border-color: rgba(173, 209, 255, 0.6);
+}
+
+/* ------------ NIVEL JAVASCRIPT ------------- */
+#js-game {
+    --level-primary: var(--js-primary);
+    --level-secondary: var(--js-secondary);
+    background: linear-gradient(160deg, rgba(247, 223, 30, 0.18) 0%, rgba(14, 14, 16, 0.92) 75%);
+    border: 1px solid rgba(247, 223, 30, 0.28);
+    border-radius: 26px;
+    box-shadow: 0 28px 70px rgba(247, 223, 30, 0.22);
+    padding: clamp(1.5rem, 2.5vw, 3rem);
+}
+
+#js-game .level-header h2 {
+    color: rgba(255, 248, 200, 0.95);
+    letter-spacing: 0.1em;
+}
+
+#js-game .level-header p {
+    color: rgba(255, 248, 200, 0.75);
+}
+
+#js-game .code-challenges {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: clamp(1.2rem, 2vw, 2.2rem);
+}
+
+#js-game .challenge-card {
+    background: linear-gradient(180deg, rgba(15, 15, 18, 0.92) 0%, rgba(9, 9, 12, 0.95) 100%);
+    border: 1px solid rgba(247, 223, 30, 0.28);
+    border-radius: 22px;
+    padding: clamp(1.2rem, 2vw, 2rem);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+}
+
+#js-game .challenge-card::after {
+    content: '';
+    position: absolute;
+    inset: -40% -20% auto auto;
+    background: radial-gradient(circle, rgba(247, 223, 30, 0.25), transparent 60%);
+    transform: rotate(25deg);
+    pointer-events: none;
+}
+
+#js-game .challenge-card h3 {
+    color: rgba(255, 248, 200, 0.92);
+    font-size: 1.15rem;
+}
+
+#js-game .code-block {
+    background: rgba(12, 12, 16, 0.9);
+    border: 1px solid rgba(247, 223, 30, 0.32);
+    border-radius: 16px;
+    padding: 1.1rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+#js-game .code-block pre {
+    color: rgba(255, 254, 238, 0.9);
+    text-shadow: 0 0 6px rgba(247, 223, 30, 0.15);
+}
+
+#js-game .code-input {
+    background: rgba(247, 223, 30, 0.16);
+    border: 1px solid rgba(247, 223, 30, 0.5);
+    border-radius: 10px;
+    color: rgba(17, 17, 17, 0.92);
+    font-weight: 700;
+    min-width: 110px;
+    transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+#js-game .code-input::placeholder {
+    color: rgba(17, 17, 17, 0.6);
+}
+
+#js-game .code-input:focus {
+    box-shadow: 0 0 0 2px rgba(247, 223, 30, 0.45), 0 10px 24px rgba(247, 223, 30, 0.25);
+    transform: translateY(-2px);
+}
+
+#js-game .code-input.correct {
+    background: rgba(151, 227, 110, 0.2);
+    border-color: rgba(151, 227, 110, 0.7);
+}
+
+#js-game .code-input.wrong {
+    background: rgba(255, 107, 107, 0.18);
+    border-color: rgba(255, 107, 107, 0.6);
+}
+
+#js-game .challenge-status {
+    background: rgba(247, 223, 30, 0.18);
+    border-radius: 12px;
+    color: rgba(247, 223, 30, 0.92);
+    padding: 0.55rem 0.8rem;
+    letter-spacing: 0.05em;
+}
+
+#js-game .challenge-status.correct {
+    background: rgba(151, 227, 110, 0.2);
+    color: rgba(18, 84, 21, 0.9);
+}
+
+#js-game .challenge-status.wrong {
+    background: rgba(255, 107, 107, 0.2);
+    color: rgba(99, 7, 7, 0.85);
+}
+
+#js-game .js-info,
+#css-game .css-info {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    padding: 1.4rem;
+    color: rgba(226, 232, 240, 0.9);
+}
+
+#js-game .js-info h3,
+#css-game .css-info h3 {
+    color: rgba(255, 255, 255, 0.95);
+    letter-spacing: 0.08em;
+}
+
+#js-game .js-hints ul li {
+    color: rgba(255, 248, 200, 0.78);
+}
+
+/* ------------ RESPONSIVE ------------- */
+@media (max-width: 1200px) {
+    #html-game .webpage-template {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-areas:
+            "header header"
+            "nav nav"
+            "main main"
+            "article aside"
+            "footer footer";
+    }
+}
+
+@media (max-width: 1024px) {
+    .game-container {
+        border-radius: 20px;
+    }
+
+    #css-game .css-designer-workspace {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .game-header {
+        padding: var(--spacing-4);
+    }
+
+    #html-game,
+    #css-game,
+    #js-game {
+        padding: 1.4rem;
+    }
+
+    #html-game .drop-zone {
+        min-height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pieces-container.active {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+    }
+
+    #js-game .code-challenges {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ===================================
