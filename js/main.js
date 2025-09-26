@@ -66,6 +66,7 @@ class HTMLSemanticGame {
         this.completedGames = [];
         this.isGameStarted = false;
         this.validator = null;
+        this.jsChallenges = [];
         this.init();
     }
 
@@ -1578,11 +1579,15 @@ class HTMLSemanticGame {
             input.addEventListener('blur', (e) => this.validateCodeInput(e));
         });
         
+        this.jsChallenges = Array.from(document.querySelectorAll('#js-game .challenge-card'));
         this.jsProgress = {
             completed: 0,
-            total: 4
+            total: this.jsChallenges.length,
+            currentChallenge: 1,
+            completedChallenges: new Set()
         };
-        
+
+        this.initializeJSChallenges();
         this.updateJSProgress();
     }
 
@@ -2162,6 +2167,154 @@ class HTMLSemanticGame {
     }
 
     /**
+     * Inicializa el estado visual de los desafíos JS
+     */
+    initializeJSChallenges() {
+        if (!this.jsChallenges || !this.jsChallenges.length) return;
+
+        this.jsProgress.completed = 0;
+        this.jsProgress.currentChallenge = 1;
+        if (this.jsProgress.completedChallenges && typeof this.jsProgress.completedChallenges.clear === 'function') {
+            this.jsProgress.completedChallenges.clear();
+        } else {
+            this.jsProgress.completedChallenges = new Set();
+        }
+
+        this.jsChallenges.forEach((card, index) => {
+            card.classList.remove('is-active', 'is-complete');
+            card.setAttribute('aria-hidden', 'true');
+            delete card.dataset.completed;
+
+            const statusElement = card.querySelector('.challenge-status');
+            if (statusElement) {
+                if (!statusElement.dataset.defaultText) {
+                    statusElement.dataset.defaultText = statusElement.textContent.trim();
+                }
+                statusElement.textContent = statusElement.dataset.defaultText;
+                statusElement.className = 'challenge-status';
+            }
+
+            const inputs = card.querySelectorAll('.code-input');
+            inputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('correct', 'wrong');
+                input.disabled = false;
+            });
+        });
+
+        this.activateJSChallenge(1);
+    }
+
+    /**
+     * Activa un desafío JS específico
+     */
+    activateJSChallenge(challengeNumber) {
+        if (!this.jsChallenges || !this.jsChallenges.length) return;
+
+        this.jsProgress.currentChallenge = challengeNumber;
+
+        this.jsChallenges.forEach((card, index) => {
+            const cardChallenge = Number(card.dataset.challenge) || index + 1;
+            const isCompleted = this.jsProgress.completedChallenges.has(cardChallenge);
+
+            if (cardChallenge === challengeNumber && !isCompleted) {
+                card.classList.remove('is-complete');
+                card.removeAttribute('aria-hidden');
+                card.classList.remove('is-active');
+                void card.offsetHeight;
+                card.classList.add('is-active');
+            } else {
+                card.classList.remove('is-active');
+                card.setAttribute('aria-hidden', 'true');
+            }
+        });
+
+        this.focusFirstJSInput(challengeNumber);
+    }
+
+    /**
+     * Enfoca el primer input del desafío activo
+     */
+    focusFirstJSInput(challengeNumber) {
+        if (!this.jsChallenges || !this.jsChallenges.length) return;
+
+        const activeCard = this.jsChallenges.find(card => Number(card.dataset.challenge) === challengeNumber);
+        if (!activeCard) return;
+
+        const firstInput = activeCard.querySelector('.code-input');
+        if (firstInput) {
+            setTimeout(() => {
+                if (!firstInput.disabled) {
+                    firstInput.focus();
+                }
+            }, 220);
+        }
+    }
+
+    /**
+     * Maneja la finalización de un desafío JS
+     */
+    handleJSChallengeCompletion(challengeCard) {
+        const challengeNumber = Number(challengeCard.dataset.challenge) || this.jsChallenges.indexOf(challengeCard) + 1;
+
+        if (this.jsProgress.completedChallenges.has(challengeNumber)) {
+            return;
+        }
+
+        this.jsProgress.completedChallenges.add(challengeNumber);
+        challengeCard.dataset.completed = 'true';
+        challengeCard.classList.add('is-complete');
+
+        const inputs = challengeCard.querySelectorAll('.code-input');
+        inputs.forEach(input => {
+            input.disabled = true;
+            input.classList.add('correct');
+        });
+
+        this.jsProgress.completed++;
+        this.updateScore(true);
+        this.updateJSProgress();
+
+        if (window.GameAudio) {
+            window.GameAudio.playSound('drop-success');
+        }
+
+        const nextChallengeNumber = this.getNextJSChallengeNumber(challengeCard);
+
+        setTimeout(() => {
+            challengeCard.classList.remove('is-active');
+            challengeCard.setAttribute('aria-hidden', 'true');
+        }, 550);
+
+        if (nextChallengeNumber) {
+            setTimeout(() => {
+                this.activateJSChallenge(nextChallengeNumber);
+            }, 600);
+        } else if (this.jsProgress.completed === this.jsProgress.total) {
+            setTimeout(() => {
+                this.completeCurrentGame();
+            }, 1200);
+        }
+    }
+
+    /**
+     * Obtiene el siguiente desafío pendiente
+     */
+    getNextJSChallengeNumber(currentCard) {
+        if (!this.jsChallenges || !this.jsChallenges.length) return null;
+
+        const currentIndex = this.jsChallenges.indexOf(currentCard);
+        for (let i = currentIndex + 1; i < this.jsChallenges.length; i++) {
+            const card = this.jsChallenges[i];
+            const number = Number(card.dataset.challenge) || i + 1;
+            if (!this.jsProgress.completedChallenges.has(number)) {
+                return number;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Maneja cambios en inputs de código JavaScript
      */
     handleCodeInputChange(event) {
@@ -2203,22 +2356,7 @@ class HTMLSemanticGame {
                 
                 // Marcar este desafío como completado si no lo estaba
                 if (!challengeCard.dataset.completed) {
-                    challengeCard.dataset.completed = 'true';
-                    this.jsProgress.completed++;
-                    this.updateScore(true);
-                    
-                    if (window.GameAudio) {
-                        window.GameAudio.playSound('drop-success');
-                    }
-                    
-                    this.updateJSProgress();
-                    
-                    // Verificar si el juego JS está completo
-                    if (this.jsProgress.completed === this.jsProgress.total) {
-                        setTimeout(() => {
-                            this.completeCurrentGame();
-                        }, 1500);
-                    }
+                    this.handleJSChallengeCompletion(challengeCard);
                 }
             }
         } else if (value.length > 0) {
