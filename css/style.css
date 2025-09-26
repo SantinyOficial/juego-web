@@ -20,13 +20,8 @@
     
     /* Colores activos (cambian dinámicamente) */
     --color-primary: var(--phase-1-primary);
-    --color-primary-alpha-30: rgba(74, 144, 226, 0.3);
-    --color-primary-alpha-15: rgba(74, 144, 226, 0.15);
-    --color-primary-alpha-20: rgba(74, 144, 226, 0.2);
+    /* Eliminamos las variables alpha del formulario para que no opaque el fondo */
     --color-secondary: var(--phase-1-secondary);
-    --color-secondary-alpha-25: rgba(92, 179, 204, 0.25);
-    --color-secondary-alpha-10: rgba(92, 179, 204, 0.1);
-    --color-secondary-alpha-15: rgba(92, 179, 204, 0.15);
     --color-accent: var(--phase-1-primary);
     --color-danger: var(--phase-1-secondary);
     
@@ -254,12 +249,7 @@ body::after {
 body.phase-1 {
     --color-primary: var(--phase-1-primary);
     --color-secondary: var(--phase-1-secondary);
-    --color-primary-alpha-30: rgba(74, 144, 226, 0.3);
-    --color-primary-alpha-15: rgba(74, 144, 226, 0.15);
-    --color-primary-alpha-20: rgba(74, 144, 226, 0.2);
-    --color-secondary-alpha-25: rgba(92, 179, 204, 0.25);
-    --color-secondary-alpha-10: rgba(92, 179, 204, 0.1);
-    --color-secondary-alpha-15: rgba(92, 179, 204, 0.15);
+    /* Sin variables alpha para no opacar el fondo galáctico */
 }
 
 /* FASE 2: HTML - Naranja nebular suave */
@@ -2342,18 +2332,18 @@ body.big-bang {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: radial-gradient(ellipse at center, 
+    /* background: radial-gradient(ellipse at center, 
         rgba(30, 20, 60, 0.95) 0%,
         rgba(65, 25, 85, 0.9) 25%,
         rgba(25, 45, 95, 0.85) 50%,
         rgba(35, 65, 45, 0.8) 75%,
-        rgba(15, 10, 30, 0.98) 100%);
+        rgba(15, 10, 30, 0.98) 100%); */
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
     animation: big-bang-modal-appear 2s ease-in-out;
-    backdrop-filter: blur(15px);
+    /* backdrop-filter: blur(15px); */
 }
 
 @keyframes big-bang-modal-appear {
