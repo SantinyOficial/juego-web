@@ -638,9 +638,6 @@ class HTMLSemanticGame {
         this.correctCountElement = document.getElementById('correct-count');
         this.attemptsCountElement = document.getElementById('attempts-count');
         
-        // Botón de reset
-        this.resetButton = document.getElementById('reset-game');
-        
         console.log(`📊 Encontradas ${this.pieces.length} piezas y ${this.dropZones.length} zonas`);
     }
 
@@ -650,9 +647,6 @@ class HTMLSemanticGame {
     setupEventListeners() {
         // Event listeners dinámicos para el juego actual
         this.updateEventListeners();
-
-        // Event listener para el botón de reset
-        this.resetButton.addEventListener('click', () => this.resetGame());
 
         // Event listener para el control de audio
         const audioToggle = document.getElementById('audio-toggle');

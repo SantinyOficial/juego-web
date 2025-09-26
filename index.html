@@ -121,6 +121,24 @@
                 </div>
                 <span id="progress-text" class="progress-text">0 / 100 XP</span>
             </div>
+
+            <div class="game-stats">
+                <div class="stat">
+                    <span class="stat-label">Correctas:</span>
+                    <span id="correct-count">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Intentos:</span>
+                    <span id="attempts-count">0</span>
+                </div>
+            </div>
+
+            <div class="player-achievements achievements">
+                <h3>🏅 Logros Recientes</h3>
+                <div id="achievements-list" class="achievements-list">
+                    <!-- Los logros se generarán dinámicamente -->
+                </div>
+            </div>
         </aside>
 
         <div class="game-main">
@@ -386,10 +404,10 @@
                 </div>
             </section>
 
-            <aside class="pieces-inventory">
+        <aside class="pieces-inventory">
             <h2 id="inventory-title">🧩 Piezas HTML</h2>
             <p id="inventory-description">Despliega cada componente en la consola principal para desbloquear el hiperimpulso.</p>
-            
+
             <!-- PIEZAS HTML (Nivel 1) -->
             <div id="html-pieces" class="pieces-container active">
                 <div class="piece" draggable="true" data-tag="header">
@@ -414,9 +432,9 @@
 
             <!-- NIVEL CSS: Sin piezas - Es interactivo -->
             <div id="css-pieces" class="pieces-container hidden">
-            <div class="css-info">
-                <h3>🎨 Panel táctico de CSS</h3>
-                <p>Ejecuta combinaciones estratégicas de estilo para avanzar.</p>
+                <div class="css-info">
+                    <h3>🎨 Panel táctico de CSS</h3>
+                    <p>Ejecuta combinaciones estratégicas de estilo para avanzar.</p>
                     <div class="css-progress">
                         <span id="css-progress-text">0 / 4 preguntas completadas</span>
                         <div class="mini-progress-bar">
@@ -428,9 +446,9 @@
 
             <!-- NIVEL JAVASCRIPT: Sin piezas - Es de completar código -->
             <div id="js-pieces" class="pieces-container hidden">
-            <div class="js-info">
-                <h3>⚡ Núcleo de scripts</h3>
-                <p>Completa las rutinas clave para mantener activa la inteligencia de la nave.</p>
+                <div class="js-info">
+                    <h3>⚡ Núcleo de scripts</h3>
+                    <p>Completa las rutinas clave para mantener activa la inteligencia de la nave.</p>
                     <div class="js-progress">
                         <span id="js-progress-text">0 / 4 ejercicios completados</span>
                         <div class="mini-progress-bar">
@@ -448,29 +466,7 @@
                     </div>
                 </div>
             </div>
-            </div>
-            
-            <div class="game-stats">
-                <div class="stat">
-                    <span class="stat-label">Correctas:</span>
-                    <span id="correct-count">0</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Intentos:</span>
-                    <span id="attempts-count">0</span>
-                </div>
-            </div>
-            
-            <button id="reset-game" class="reset-btn">🔄 Reiniciar</button>
-            </div>
-            
-            <div class="achievements">
-                <h3>🏅 Logros Recientes</h3>
-                <div id="achievements-list" class="achievements-list">
-                    <!-- Los logros se generarán dinámicamente -->
-                </div>
-            </div>
-        </div>
+        </aside>
         </div>
     </main>
 
