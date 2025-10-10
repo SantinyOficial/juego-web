@@ -1620,7 +1620,7 @@ body.big-bang {
    =================================== */
 .game-container {
     display: grid;
-    grid-template-columns: 280px 1fr 300px;
+    grid-template-columns: clamp(240px, 20vw, 300px) minmax(0, 1fr) clamp(240px, 22vw, 320px);
     grid-template-rows: auto 1fr;
     grid-template-areas: 
         "player header header"
@@ -2986,23 +2986,45 @@ body.big-bang {
 /* ===================================
    RESPONSIVE DESIGN
    =================================== */
+@media (max-width: 1280px) {
+    .game-container {
+        grid-template-columns: clamp(240px, 28vw, 300px) minmax(0, 1fr);
+        grid-template-areas:
+            "header header"
+            "player board"
+            "inventory board";
+        align-items: start;
+    }
+
+    .game-header {
+        align-self: stretch;
+    }
+
+    .pieces-inventory {
+        align-self: stretch;
+    }
+}
+
 @media (max-width: 1024px) {
     .game-container {
         grid-template-columns: 1fr;
         grid-template-areas: 
             "header"
-            "inventory"
-            "board";
+            "player"
+            "board"
+            "inventory";
         padding: var(--spacing-4);
     }
     
-    .pieces-inventory {
-        order: -1;
+    .player-panel {
+        position: static;
+        top: auto;
+        width: 100%;
     }
     
     .pieces-container {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
         gap: var(--spacing-2);
     }
 }
@@ -3011,6 +3033,12 @@ body.big-bang {
     .game-container {
         padding: var(--spacing-3);
         gap: var(--spacing-4);
+    }
+    
+    .game-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-3);
     }
     
     .game-header h1 {
@@ -3032,6 +3060,16 @@ body.big-bang {
     .drop-zone {
         padding: var(--spacing-4);
         min-height: 60px;
+    }
+
+    .player-info {
+        padding-right: 0;
+    }
+
+    .audio-controls {
+        position: static;
+        width: 100%;
+        justify-content: flex-end;
     }
 }
 

@@ -2,8 +2,6 @@
 # Archivos de Desarrollo y Documentación Interna
 # ===================================
 COPILOT_INSTRUCTIONS.md
-GUIA_GITHUB.md
-.gitignore
 
 # ===================================
 # Node Modules y Dependencias
@@ -65,6 +63,5 @@ dist/
 build/
 .cache/
 COPILOT_INSTRUCTIONS.md
-COPILOT_INSTRUCTIONS.md
 CHANGELOG.md
-COPILOT_INSTRUCTIONS.md
+GUIA_GITHUB.md
